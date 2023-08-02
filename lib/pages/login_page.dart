@@ -16,26 +16,40 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 50,
-              ),
 
               //logo
-              const Icon(Icons.line_style, size: 100),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Image.asset(
+                    'lib/images/background.png',
+                    height: 250,
+                  ),
+                ],
+              ),
 
               const SizedBox(
-                height: 50,
+                height: 20,
               ),
 
               //welcome back
-              Text('Welcome back you\'ve been missed!',
-                  style: TextStyle(color: Colors.grey[700], fontSize: 16)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    const Text('Login',
+                          style: TextStyle(color: Color.fromRGBO(37, 42, 48, 1), fontSize: 25, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
 
               const SizedBox(
                 height: 25,
@@ -44,7 +58,7 @@ class LoginPage extends StatelessWidget {
               //username
               MyTextField(
                 controller: usernameController,
-                hintText: 'Username',
+                hintText: 'Username or Email',
                 obscureText: false,
               ),
 
@@ -78,7 +92,7 @@ class LoginPage extends StatelessWidget {
               ),
 
               const SizedBox(
-                height: 25,
+                height: 35,
               ),
 
               //sign in
@@ -112,7 +126,7 @@ class LoginPage extends StatelessWidget {
               ),
 
               const SizedBox(
-                height: 50,
+                height: 25,
               ),
 
               //google + apple sign in
@@ -136,19 +150,22 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Not a member?',
+                    'No account?',
                     style: TextStyle(
                       color: Colors.grey[700],
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Register Now',
+                    'Create one now!',
                     style: TextStyle(
-                      color: Colors.blue,
+                      color: Colors.grey[900],
                       fontWeight: FontWeight.bold,
                     ),
-                  )
+                  ),
+
+                  const SizedBox(height: 35),
+
                 ],
               )
             ],
