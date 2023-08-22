@@ -1,4 +1,4 @@
 class APIConstants{
-  static String baseURL = "https://tiagoalmeida5.com/tracker_app/";
-  static String loginURL = "${baseURL}login.php";
+  static String baseURL = "tiagoalmeida5.com";
+  static String loginURL = "/tracker_app/login.php";
 }
