@@ -7,44 +7,67 @@ import 'package:trackerapp/components/squared_tile.dart';
 import 'package:trackerapp/constants.dart';
 import 'package:trackerapp/pages/home_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:trackerapp/pages/signup_page.dart';
+import 'dart:math' as math;
 
-class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+class SignupPage extends StatefulWidget {
+  SignupPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignupPageState createState() => _SignupPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignupPageState extends State<SignupPage> {
   bool passwordVisible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    passwordVisible = true;
-  }
+  bool confirmPasswordVisible = false;
 
   //text editing controllers
   final usernameController = TextEditingController();
+  final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  //sign user in method
-  Future<void> signUserIn(BuildContext context, username, password) async {
+  Future<void> registerUser(
+      BuildContext context, username, email, password, confirmPassword) async {
+
+    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      Fluttertoast.showToast(
+        msg: 'Please fill in all fields',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return;
+    }
+
+    if (password != confirmPassword) {
+      Fluttertoast.showToast(
+        msg: 'Passwords do not match.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      return;
+    }
+
     var response =
-        await ApiService.post(APIConstants.baseURL, APIConstants.loginURL, {
+        await ApiService.post(APIConstants.baseURL, APIConstants.signupURL, {
       'user_name': username,
+      'email': email,
       'password': password,
     });
 
-    if (response.contains('Welcome')) {
+    if (response.contains('Successfull')) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
     } else {
       Fluttertoast.showToast(
-        msg: 'Login failed. Please check your credentials.',
+        msg: response,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -65,12 +88,15 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             //logo
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Image.asset(
-                  'lib/images/background_primary.png',
-                  height: 250,
+                Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationY(math.pi),
+                  child: Image.asset(
+                    'lib/images/background_primary.png',
+                    height: 250,
+                  ),
                 ),
               ],
             ),
@@ -85,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text('Login',
+                  const Text('Sign-up',
                       style: TextStyle(
                           color: Color.fromRGBO(37, 42, 48, 1),
                           fontSize: 25,
@@ -101,7 +127,17 @@ class _LoginPageState extends State<LoginPage> {
             //username
             MyTextField(
               controller: usernameController,
-              hintText: 'Username or Email',
+              hintText: 'Username',
+              obscureText: false,
+            ),
+
+            const SizedBox(
+              height: 10,
+            ),
+
+            MyTextField(
+              controller: emailController,
+              hintText: 'Email',
               obscureText: false,
             ),
 
@@ -134,29 +170,37 @@ class _LoginPageState extends State<LoginPage> {
               height: 10,
             ),
 
-            //forgot password
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Forgot Password?',
-                    style: TextStyle(color: Colors.grey[600]),
+            //password
+            PasswordField(
+              controller: confirmPasswordController,
+              obscureText: true,
+              hintText: 'Confirm Password',
+              decoration: InputDecoration(
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    passwordVisible ? Icons.visibility : Icons.visibility_off,
                   ),
-                ],
+                  onPressed: () {
+                    setState(
+                      () {
+                        passwordVisible = !passwordVisible;
+                      },
+                    );
+                  },
+                ),
               ),
             ),
 
             const SizedBox(
-              height: 35,
+              height: 24,
             ),
+
 
             //sign in
             MyButton(
-              text: 'Login',
-              onTap: () => signUserIn(
-                  context, usernameController.text, passwordController.text),
+              text: 'Sign-up',
+              onTap: () => registerUser(context, usernameController.text,
+                  emailController.text, passwordController.text, confirmPasswordController.text),
             ),
 
             const SizedBox(
@@ -200,40 +244,6 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
 
-            const SizedBox(
-              height: 50,
-            ),
-
-            //not a member? register now
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'No account?',
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(width: 4),
-                GestureDetector(
-                  onTap: () {
-                    // change page to sign up page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignupPage()),
-                    );
-                  },
-                  child: Text(
-                    'Create one now!',
-                    style: TextStyle(
-                      color: Colors.grey[900],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 35),
-              ],
-            )
           ],
         ),
       ),
