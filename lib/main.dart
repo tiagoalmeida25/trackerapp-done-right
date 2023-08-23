@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'pages/home_page.dart';
 import 'pages/login_page.dart';
+import 'pages/signup_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +15,12 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      initialRoute: '/login',
+      routes: {
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignupPage(),
+        '/home': (context) => const HomePage(user: '',),
+      },
     );
   }
 }

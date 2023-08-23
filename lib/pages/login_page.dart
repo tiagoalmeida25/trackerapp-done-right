@@ -5,18 +5,16 @@ import 'package:trackerapp/components/my_textfield.dart';
 import 'package:trackerapp/components/passwordfield.dart';
 import 'package:trackerapp/components/squared_tile.dart';
 import 'package:trackerapp/constants.dart';
-import 'package:trackerapp/pages/home_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:trackerapp/pages/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   bool passwordVisible = false;
 
   @override
@@ -30,7 +28,8 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   //sign user in method
-  Future<void> signUserIn(BuildContext context, username, password) async {
+  Future<void> signUserIn(
+      String username, String password, BuildContext currentContext) async {
     var response =
         await ApiService.post(APIConstants.baseURL, APIConstants.loginURL, {
       'user_name': username,
@@ -38,10 +37,9 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     if (response.contains('Welcome')) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      if (currentContext.mounted) {
+        Navigator.pushReplacementNamed(context, '/home', arguments: username);
+      }
     } else {
       Fluttertoast.showToast(
         msg: 'Login failed. Please check your credentials.',
@@ -64,19 +62,21 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             //logo
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'lib/images/background_primary.png',
-                  height: 250,
-                ),
-              ],
-            ),
-
-            const SizedBox(
-              height: 20,
+            Container(
+              padding: EdgeInsets.zero,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Image.asset(
+                      'lib/images/background_primary.png',
+                      height: 230,
+                    ),
+                  ),
+                ],
+              ),
             ),
 
             //welcome back
@@ -84,8 +84,8 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text('Login',
+                children: const [
+                  Text('Login',
                       style: TextStyle(
                           color: Color.fromRGBO(37, 42, 48, 1),
                           fontSize: 25,
@@ -112,22 +112,7 @@ class _LoginPageState extends State<LoginPage> {
             //password
             PasswordField(
               controller: passwordController,
-              obscureText: true,
               hintText: 'Password',
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        passwordVisible = !passwordVisible;
-                      },
-                    );
-                  },
-                ),
-              ),
             ),
 
             const SizedBox(
@@ -155,8 +140,12 @@ class _LoginPageState extends State<LoginPage> {
             //sign in
             MyButton(
               text: 'Login',
-              onTap: () => signUserIn(
-                  context, usernameController.text, passwordController.text),
+              onTap: () async {
+                final currentContext = context;
+
+                await signUserIn(usernameController.text,
+                    passwordController.text, currentContext);
+              },
             ),
 
             const SizedBox(
@@ -191,9 +180,9 @@ class _LoginPageState extends State<LoginPage> {
             //google + apple sign in
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 SquareTile(imagePath: 'lib/images/google.png'),
-                const SizedBox(
+                SizedBox(
                   width: 10,
                 ),
                 SquareTile(imagePath: 'lib/images/apple.png'),
@@ -217,11 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(width: 4),
                 GestureDetector(
                   onTap: () {
-                    // change page to sign up page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignupPage()),
-                    );
+                    Navigator.pushReplacementNamed(context, '/signup');
                   },
                   child: Text(
                     'Create one now!',

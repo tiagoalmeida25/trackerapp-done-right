@@ -5,18 +5,17 @@ import 'package:trackerapp/components/my_textfield.dart';
 import 'package:trackerapp/components/passwordfield.dart';
 import 'package:trackerapp/components/squared_tile.dart';
 import 'package:trackerapp/constants.dart';
-import 'package:trackerapp/pages/home_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math' as math;
 
 class SignupPage extends StatefulWidget {
-  SignupPage({super.key});
+  const SignupPage({super.key});
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  SignupPageState createState() => SignupPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class SignupPageState extends State<SignupPage> {
   bool passwordVisible = false;
   bool confirmPasswordVisible = false;
 
@@ -28,8 +27,10 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> registerUser(
       BuildContext context, username, email, password, confirmPassword) async {
-
-    if (username.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (username.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       Fluttertoast.showToast(
         msg: 'Please fill in all fields',
         toastLength: Toast.LENGTH_SHORT,
@@ -61,10 +62,9 @@ class _SignupPageState extends State<SignupPage> {
     });
 
     if (response.contains('Successfull')) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } else {
       Fluttertoast.showToast(
         msg: response,
@@ -95,14 +95,10 @@ class _SignupPageState extends State<SignupPage> {
                   transform: Matrix4.rotationY(math.pi),
                   child: Image.asset(
                     'lib/images/background_primary.png',
-                    height: 250,
+                    height: 230,
                   ),
                 ),
               ],
-            ),
-
-            const SizedBox(
-              height: 20,
             ),
 
             //welcome back
@@ -110,8 +106,8 @@ class _SignupPageState extends State<SignupPage> {
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text('Sign-up',
+                children: const [
+                  Text('Sign-up',
                       style: TextStyle(
                           color: Color.fromRGBO(37, 42, 48, 1),
                           fontSize: 25,
@@ -148,22 +144,7 @@ class _SignupPageState extends State<SignupPage> {
             //password
             PasswordField(
               controller: passwordController,
-              obscureText: true,
               hintText: 'Password',
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        passwordVisible = !passwordVisible;
-                      },
-                    );
-                  },
-                ),
-              ),
             ),
 
             const SizedBox(
@@ -173,34 +154,22 @@ class _SignupPageState extends State<SignupPage> {
             //password
             PasswordField(
               controller: confirmPasswordController,
-              obscureText: true,
               hintText: 'Confirm Password',
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(
-                      () {
-                        passwordVisible = !passwordVisible;
-                      },
-                    );
-                  },
-                ),
-              ),
             ),
 
             const SizedBox(
               height: 24,
             ),
 
-
             //sign in
             MyButton(
               text: 'Sign-up',
-              onTap: () => registerUser(context, usernameController.text,
-                  emailController.text, passwordController.text, confirmPasswordController.text),
+              onTap: () => registerUser(
+                  context,
+                  usernameController.text,
+                  emailController.text,
+                  passwordController.text,
+                  confirmPasswordController.text),
             ),
 
             const SizedBox(
@@ -235,15 +204,46 @@ class _SignupPageState extends State<SignupPage> {
             //google + apple sign in
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 SquareTile(imagePath: 'lib/images/google.png'),
-                const SizedBox(
+                SizedBox(
                   width: 10,
                 ),
                 SquareTile(imagePath: 'lib/images/apple.png'),
               ],
             ),
 
+            const SizedBox(
+              height: 25,
+            ),
+
+            // back to login
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  child: Text(
+                    'Already have an account?',
+                    style: TextStyle(color: Colors.grey[700]),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  child: Text(
+                    ' Login!',
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

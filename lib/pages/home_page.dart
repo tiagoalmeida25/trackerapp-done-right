@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final String user;
+
+  const HomePage({super.key, required this.user});
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       
       body: Center(
-        child: Text('Logged In'),
+        child: Text('Logged In as $user'),
       ),
     );
   }
