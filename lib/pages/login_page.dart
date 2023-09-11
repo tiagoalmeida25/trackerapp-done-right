@@ -5,7 +5,6 @@ import 'package:trackerapp/components/my_button.dart';
 import 'package:trackerapp/components/my_textfield.dart';
 import 'package:trackerapp/components/passwordfield.dart';
 import 'package:trackerapp/components/squared_tile.dart';
-import 'package:trackerapp/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget {
@@ -28,7 +27,6 @@ class LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  //sign user in method
   void signUserIn() async {
     showDialog(
         context: context,
@@ -40,6 +38,8 @@ class LoginPageState extends State<LoginPage> {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text);
+
+      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       print(e.code);
       if (e.code == 'user-not-found') {
@@ -81,74 +81,93 @@ class LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                //logo
-                Container(
-                  padding: EdgeInsets.zero,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Image.asset(
-                          'lib/images/background_primary.png',
-                          height: 230,
-                        ),
+                Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.zero,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: Image.asset(
+                              'lib/images/background_primary.png',
+                              height: 230,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal:25.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Login',
+                            style: TextStyle(
+                              color: Color.fromRGBO(37, 42, 48, 1),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Text('Login',
-                                style: TextStyle(
-                                    color: Color.fromRGBO(37, 42, 48, 1),
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
+                      Column(
+                        children: [
+                          MyTextField(
+                            controller: emailController,
+                            hintText: 'Email',
+                            obscureText: false,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
 
-                      //username
-                      MyTextField(
-                        controller: emailController,
-                        hintText: 'Email',
-                        obscureText: false,
-                      ),
-
-                      //password
-                      PasswordField(
-                        controller: passwordController,
-                        hintText: 'Password',
+                          //password
+                          PasswordField(
+                            controller: passwordController,
+                            hintText: 'Password',
+                          ),
+                        ],
                       ),
 
                       //forgot password
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'Forgot Password?',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
+                      GestureDetector(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                'Forgot Password?',
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            ],
+                          ),
                         ),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/forgotpassword');
+                        },
                       ),
 
                       //sign in
                       MyButton(
                         text: 'Login',
                         onPressed: signUserIn,
+                        color: const Color.fromRGBO(37, 42, 48, 1),
                       ),
 
                       const SizedBox(
@@ -184,9 +203,9 @@ class LoginPageState extends State<LoginPage> {
                       ),
 
                       //google + apple sign in
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           SquareTile(imagePath: 'lib/images/google.png'),
                           SizedBox(
                             width: 10,
@@ -208,8 +227,7 @@ class LoginPageState extends State<LoginPage> {
                           const SizedBox(width: 4),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
-                                  context, '/signup');
+                              Navigator.pushNamed(context, '/signup');
                             },
                             child: Text(
                               'Create one now!',

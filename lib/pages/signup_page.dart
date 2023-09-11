@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:trackerapp/api_connection/api_connection.dart';
 import 'package:trackerapp/components/my_button.dart';
 import 'package:trackerapp/components/my_textfield.dart';
 import 'package:trackerapp/components/passwordfield.dart';
 import 'package:trackerapp/components/squared_tile.dart';
-import 'package:trackerapp/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math' as math;
 
 class SignupPage extends StatefulWidget {
@@ -27,6 +26,20 @@ class SignupPageState extends State<SignupPage> {
   final confirmPasswordController = TextEditingController();
 
   void registerUser() async {
+    if (passwordController.text != confirmPasswordController.text) {
+      Fluttertoast.showToast(
+        msg: 'Passwords do not match',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      return;
+    }
+
+    UserCredential userCredential;
     showDialog(
         context: context,
         builder: (context) {
@@ -34,23 +47,39 @@ class SignupPageState extends State<SignupPage> {
         });
 
     try {
-      if (passwordController.text == confirmPasswordController.text) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: emailController.text.trim(),
-            password: passwordController.text);
-      } else {
+      QuerySnapshot usernameSnapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .where('username', isEqualTo: usernameController.text.trim())
+          .get();
+
+      if (usernameSnapshot.docs.isNotEmpty) {
         Fluttertoast.showToast(
-          msg: 'Passwords do not match',
+          msg: 'Username already taken',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0,
         );
+        Navigator.pop(context);
+        return;
       }
+
+      userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text);
+
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(userCredential.user?.uid)
+          .set({
+        'username': usernameController.text.trim(),
+      });
+
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      if(e.code == 'email-already-in-use') {
+      if (e.code == 'email-already-in-use') {
         Fluttertoast.showToast(
           msg: 'Email already in use',
           toastLength: Toast.LENGTH_SHORT,
@@ -59,8 +88,16 @@ class SignupPageState extends State<SignupPage> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-      }
-      else if (e.code == 'weak-password') {
+      } else if (e.code == 'invalid-email') {
+        Fluttertoast.showToast(
+          msg: 'Invalid email',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      } else if (e.code == 'weak-password') {
         Fluttertoast.showToast(
           msg: 'Password is too weak',
           toastLength: Toast.LENGTH_SHORT,
@@ -69,8 +106,30 @@ class SignupPageState extends State<SignupPage> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
+      } else {
+        Fluttertoast.showToast(
+          msg: e.code,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
       }
+      Navigator.pop(context);
+      return;
     }
+
+    Fluttertoast.showToast(
+      msg: "Sign-up successful!",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: const Color.fromARGB(255, 73, 244, 54),
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+
+    Navigator.pop(context);
   }
 
   @override
@@ -88,73 +147,94 @@ class SignupPageState extends State<SignupPage> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                //logo
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Column(
                   children: [
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.rotationY(math.pi),
-                        child: Image.asset(
-                          'lib/images/background_primary.png',
-                          height: 230,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: Image.asset(
+                              'lib/images/background_primary.png',
+                              height: 230,
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sign-up',
+                            style: TextStyle(
+                              color: Color.fromRGBO(37, 42, 48, 1),
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      //welcome back
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: const [
-                            Text('Sign-up',
-                                style: TextStyle(
-                                    color: Color.fromRGBO(37, 42, 48, 1),
-                                    fontSize: 25,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-
                       //username
-                      MyTextField(
-                        controller: usernameController,
-                        hintText: 'Username',
-                        obscureText: false,
-                      ),
+                      Column(
+                        children: [
+                          MyTextField(
+                            controller: usernameController,
+                            hintText: 'Username',
+                            obscureText: false,
+                          ),
 
-                      MyTextField(
-                        controller: emailController,
-                        hintText: 'Email',
-                        obscureText: false,
-                      ),
+                          const SizedBox(
+                            height: 10,
+                          ),
 
-                      //password
-                      PasswordField(
-                        controller: passwordController,
-                        hintText: 'Password',
-                      ),
+                          MyTextField(
+                            controller: emailController,
+                            hintText: 'Email',
+                            obscureText: false,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
 
-                      //password
-                      PasswordField(
-                        controller: confirmPasswordController,
-                        hintText: 'Confirm Password',
+                          //password
+                          PasswordField(
+                            controller: passwordController,
+                            hintText: 'Password',
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+
+                          //password
+                          PasswordField(
+                            controller: confirmPasswordController,
+                            hintText: 'Confirm Password',
+                          ),
+                        ],
                       ),
 
                       //sign in
                       MyButton(
                         text: 'Sign-up',
                         onPressed: registerUser,
+                        color: const Color.fromRGBO(37, 42, 48, 1),
                       ),
 
                       //or continue with
@@ -182,9 +262,9 @@ class SignupPageState extends State<SignupPage> {
                       ),
 
                       //google + apple sign in
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           SquareTile(imagePath: 'lib/images/google.png'),
                           SizedBox(
                             width: 10,

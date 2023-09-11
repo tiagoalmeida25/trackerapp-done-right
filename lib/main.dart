@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
+import 'package:trackerapp/pages/forgot_password.dart';
 import 'firebase_options.dart';
 import 'pages/auth_page.dart';
 import 'pages/home_page.dart';
@@ -12,7 +14,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MainApp());
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(const MainApp());
+  });
 }
 
 class MainApp extends StatelessWidget {
@@ -20,6 +25,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       initialRoute: '/auth',
@@ -28,6 +34,7 @@ class MainApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignupPage(),
         '/home': (context) => HomePage(),
+        '/forgotpassword': (context) => const ForgotPasswordPage(),
       },
     );
   }

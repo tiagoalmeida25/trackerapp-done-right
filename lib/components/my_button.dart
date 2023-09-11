@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class MyButton extends StatelessWidget {
   final void Function()? onPressed;
   final String text;
+  final Color color;
 
   const MyButton({
     Key? key,
     required this.text,
     required this.onPressed,
+    required this.color,
   }) : super(key: key);
 
   @override
@@ -16,15 +18,18 @@ class MyButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        backgroundColor: const Color.fromRGBO(37, 42, 48, 1),
+        backgroundColor: color,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: color != Colors.white ? Colors.transparent : Colors.black,
+          ),
         ),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: color != Colors.white ? Colors.white : Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),
