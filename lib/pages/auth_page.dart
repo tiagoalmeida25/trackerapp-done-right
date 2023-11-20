@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackerapp/bloc/data_bloc.dart';
 import 'package:trackerapp/bloc/login_bloc.dart';
 
 import 'home_page.dart';
@@ -19,7 +20,10 @@ class AuthPage extends StatelessWidget {
             BlocProvider.of<LoginBloc>(context).add(AuthStart());
 
             if (state.isLoggedIn) {
-              return const HomePage();
+              return BlocProvider(
+                create: (dataContext) => DataBloc(),
+                child: const HomePage(),
+              );
             } else {
               return const LoginPage();
             }
