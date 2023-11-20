@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
 class CustomNavBar extends StatelessWidget {
+  final BuildContext context;
   final Color buttonColor;
   final Function() onPressed;
 
   const CustomNavBar(
-      {Key? key, required this.buttonColor, required this.onPressed})
+      {Key? key,
+      required this.context,
+      required this.buttonColor,
+      required this.onPressed})
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(context) {
     final Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
@@ -30,7 +34,7 @@ class CustomNavBar extends StatelessWidget {
                   child: FloatingActionButton(
                     backgroundColor: buttonColor,
                     elevation: 0.1,
-                    onPressed: () {},
+                    onPressed: onPressed,
                     child: const Icon(
                       Icons.add,
                       color: Color.fromRGBO(37, 42, 48, 1),

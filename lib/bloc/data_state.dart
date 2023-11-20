@@ -1,36 +1,53 @@
 part of 'data_bloc.dart';
 
 @immutable
-class DataState {
-  List<Entry>? data;
-  List<Entry>? categoryData;
-  bool? dataLoaded;
-  bool? isLoading;
-  User? user;
-  String? currentPage;
-  String? selectedCategory;
-  String? selectedSubcategory;
-  bool? firstLoad;
+abstract class DataState {}
 
-  DataState({
-    this.dataLoaded = false,
-    this.isLoading = false,
-    this.data,
-    this.user,
-    this.categoryData,
-    this.currentPage,
-    this.selectedCategory,
-    this.selectedSubcategory,
-    this.firstLoad,
-  });
+class DataInitial extends DataState {}
+
+class DataLoading extends DataState {}
+
+class DataLoaded extends DataState {
+  final List<Entry> data;
+
+  DataLoaded({required this.data});
 }
 
-class DataInitial extends DataState {
-  DataInitial()
-      : super(
-            dataLoaded: false,
-            isLoading: false,
-            firstLoad: false,
-            data: null,
-            currentPage: 'categories');
+class CategoriesLoaded extends DataState {
+  final List<String> categories;
+  final List<Entry> data;
+
+  CategoriesLoaded({required this.categories, required this.data});
+}
+
+class SubCategoriesLoaded extends DataState {
+  final List<String> subcategories;
+  final String category;
+  final List<Entry> data;
+
+  SubCategoriesLoaded(
+      {required this.subcategories,
+      required this.category,
+      required this.data});
+}
+
+class EntriesLoaded extends DataState {
+  final List<Entry> entries;
+  final List<Entry> data;
+  final String category;
+  final String subcategory;
+
+  EntriesLoaded({required this.entries, required this.data, required this.category, required this.subcategory});
+}
+
+class DataError extends DataState {
+  final String message;
+
+  DataError({required this.message});
+}
+
+class DataOperationSuccess extends DataState {
+  final String message;
+
+  DataOperationSuccess({required this.message});
 }

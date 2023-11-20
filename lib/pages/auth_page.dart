@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackerapp/bloc/data_bloc.dart';
 import 'package:trackerapp/bloc/login_bloc.dart';
+import 'package:trackerapp/service/firestore_service.dart';
 
 import 'home_page.dart';
 import 'login_page.dart';
@@ -21,7 +22,8 @@ class AuthPage extends StatelessWidget {
 
             if (state.isLoggedIn) {
               return BlocProvider(
-                create: (dataContext) => DataBloc(),
+                create: (dataContext) =>
+                    DataBloc(FirestoreService(user: state.user!)),
                 child: const HomePage(),
               );
             } else {
