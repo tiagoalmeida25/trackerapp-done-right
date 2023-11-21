@@ -7,14 +7,25 @@ class FirestoreService {
 
   FirestoreService({required this.user});
 
-  CollectionReference get _usersCollectionReference =>
+  CollectionReference get _dataCollectionReference => FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('data');
+
+  CollectionReference get _categoriesCollectionReference =>
       FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
-          .collection('data');
+          .collection('categories');
+
+  CollectionReference get _subcategoriesCollectionReference =>
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('subcategories');
 
   Stream<List<Entry>> getAllData() {
-    return _usersCollectionReference.snapshots().map((snapshot) {
+    return _dataCollectionReference.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -31,18 +42,28 @@ class FirestoreService {
 
   Future<void> addData(String id, String category, String subcategory,
       String value, DateTime date) async {
-    await _usersCollectionReference.add({
+    await _dataCollectionReference.add({
       'id': id,
       'category': category,
       'subcategory': subcategory,
       'value': value,
       'date': date,
     });
+
+    // QuerySnapshot querySnapshot = await _categoriesCollectionReference
+    //     .where('category', isEqualTo: category)
+    //     .get();
+
+    // if (querySnapshot.docs.isEmpty) {
+    //   await _categoriesCollectionReference.add({
+    //     'category': category,
+    //     'category_id': Timestamp.now().toString(),
+    //   });
   }
 
   Future<void> deleteData(String id) async {
     QuerySnapshot querySnapshot =
-        await _usersCollectionReference.where('id', isEqualTo: id).get();
+        await _dataCollectionReference.where('id', isEqualTo: id).get();
     for (var doc in querySnapshot.docs) {
       doc.reference.delete();
     }
@@ -51,7 +72,7 @@ class FirestoreService {
   Future<void> updateData(String id, String category, String subcategory,
       String value, DateTime date) async {
     QuerySnapshot querySnapshot =
-        await _usersCollectionReference.where('id', isEqualTo: id).get();
+        await _dataCollectionReference.where('id', isEqualTo: id).get();
     for (var doc in querySnapshot.docs) {
       doc.reference.update({
         'category': category,
@@ -81,4 +102,14 @@ class FirestoreService {
             entry.category == category && entry.subcategory == subcategory)
         .toList();
   }
+
+  // Future<void> addCategory(String category) async {
+  //   await _dataCollectionReference.add({
+  //     'id': category,
+  //     'category': category,
+  //     'subcategory': '',
+  //     'value': '',
+  //     'date': DateTime.now(),
+  //   });
+  // }
 }
