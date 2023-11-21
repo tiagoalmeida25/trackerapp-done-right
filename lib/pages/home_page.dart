@@ -8,14 +8,15 @@ import 'package:trackerapp/bloc/login_bloc.dart';
 import 'package:trackerapp/components/home_page_comp.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String username;
+
+  const HomePage({Key? key, required this.username}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  String username = '';
   // String selectedPalette = "";
   // final List<String> paletteNames = [
   //   "primary",
@@ -31,12 +32,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<DataBloc>(context).add(LoadData());
-    username = BlocProvider.of<LoginBloc>(context).state.username!;
+    BlocProvider.of<DataBloc>(context).add(LoadCategories());
   }
 
   void logout(BuildContext context) {
-    BlocProvider.of<LoginBloc>(context).add(LogoutPressed());
+    BlocProvider.of<LoginBloc>(context).add(Logout());
   }
 
   Widget addNewCategory() {
@@ -80,8 +80,7 @@ class _HomePageState extends State<HomePage> {
       width: 150,
       padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
       decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(16)),
+          color: Colors.transparent, borderRadius: BorderRadius.circular(16)),
       child: const Row(
         children: [
           Icon(Icons.add, color: Colors.transparent, size: 24),
@@ -103,33 +102,31 @@ class _HomePageState extends State<HomePage> {
           ScaffoldMessenger.of(listennerContext)
               .showSnackBar(SnackBar(content: Text(state.message)));
           Timer(const Duration(seconds: 30), () {
-            BlocProvider.of<DataBloc>(listennerContext).add(LoadData());
+            BlocProvider.of<DataBloc>(listennerContext).add(LoadCategories());
           });
         } else if (state is DataOperationSuccess) {
           ScaffoldMessenger.of(listennerContext)
               .showSnackBar(SnackBar(content: Text(state.message)));
-          dataBloc.add(LoadData());
+          dataBloc.add(LoadCategories());
         }
       },
       builder: (builderContext, state) {
         if (state is DataLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is DataLoaded) {
-          dataBloc.add(GoToCategoriesPage(data: state.data));
         } else if (state is CategoriesLoaded) {
           return HomePageComp(
             builderContext: builderContext,
             theme: primary,
-            username: username,
+            username: widget.username,
             state: state,
             dataBloc: dataBloc,
             buttonNewSomething: addNewCategory(),
           );
-        } else if (state is SubCategoriesLoaded) {
+        } else if (state is SubcategoriesLoaded) {
           return HomePageComp(
             builderContext: builderContext,
             theme: primary,
-            username: username,
+            username: widget.username,
             state: state,
             dataBloc: dataBloc,
             buttonNewSomething: addNewSubCategory(),
@@ -138,7 +135,7 @@ class _HomePageState extends State<HomePage> {
           return HomePageComp(
             builderContext: builderContext,
             theme: primary,
-            username: username,
+            username: widget.username,
             state: state,
             dataBloc: dataBloc,
             buttonNewSomething: addNewEntry(),

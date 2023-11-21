@@ -2,13 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackerapp/app_colors.dart';
 import 'package:trackerapp/bloc/data_bloc.dart';
 import 'package:trackerapp/components/back_button.dart';
 import 'package:trackerapp/components/custom_nav_bar.dart';
 import 'package:trackerapp/components/data_list.dart';
 import 'package:intl/intl.dart';
 import 'package:trackerapp/components/my_textfield.dart';
-import 'package:trackerapp/models/entry.dart';
 
 class HomePageComp extends StatelessWidget {
   final BuildContext builderContext;
@@ -28,8 +28,8 @@ class HomePageComp extends StatelessWidget {
     required this.buttonNewSomething,
   }) : super(key: key);
 
-  void addEntry(BuildContext oldContext, List<Entry> data, String? category,
-      String? subcategory) {
+  void addEntry(
+      BuildContext oldContext, String? category, String? subcategory) {
     final TextEditingController categoryController = TextEditingController();
     final TextEditingController subcategoryController = TextEditingController();
     final TextEditingController valueController = TextEditingController();
@@ -45,7 +45,9 @@ class HomePageComp extends StatelessWidget {
     showDialog(
       context: oldContext,
       builder: ((context) => AlertDialog(
-            title: const Text('Add Entry'),
+            backgroundColor: const Color.fromRGBO(37, 42, 48, 1),
+            title:
+                const Text('Add Entry', style: TextStyle(color: Colors.white)),
             content: SizedBox(
               height: 250,
               child: Column(
@@ -69,9 +71,11 @@ class HomePageComp extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   DateTimeField(
+                    style: const TextStyle(color: Colors.white),
                     format: DateFormat('dd/MM/yyyy HH:mm'),
                     decoration: const InputDecoration(
                       labelText: 'Date/Time',
+                      labelStyle: TextStyle(color: Colors.white)
                     ),
                     initialValue: selectedDate,
                     onShowPicker: (context, currentValue) async {
@@ -107,15 +111,20 @@ class HomePageComp extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Cancel'),
+                child: Text('Cancel', style: TextStyle(color: primary[10])),
               ),
-              TextButton(
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(theme[10]),
+                  textStyle: MaterialStateProperty.all(
+                      const TextStyle(color: Color.fromARGB(186, 186, 186, 1))),
+                ),
                 onPressed: () {
                   BlocProvider.of<DataBloc>(oldContext).add(
                     AddEntry(
                       id: Timestamp.now().toString(),
-                      category: categoryController.text,
-                      subcategory: subcategoryController.text,
+                      categoryId: categoryController.text,
+                      subcategoryId: subcategoryController.text,
                       value: valueController.text,
                       date: selectedDate,
                     ),
@@ -263,7 +272,7 @@ class HomePageComp extends StatelessWidget {
                               children: [
                                 if (state is CategoriesLoaded)
                                   const SizedBox(width: 10),
-                                if (state is SubCategoriesLoaded)
+                                if (state is LoadCategories)
                                   CustomBackButton(
                                       onTap: () => dataBloc.add(
                                             GoToCategoriesPage(
@@ -275,9 +284,8 @@ class HomePageComp extends StatelessWidget {
                                 else if (state is EntriesLoaded)
                                   CustomBackButton(
                                       onTap: () => dataBloc.add(
-                                            GoToSubCategoryPage(
-                                              data: state.data,
-                                              category: state.category,
+                                            LoadSubcategories(
+                                              categoryId: state.category,
                                             ),
                                           ),
                                       state: state,
@@ -296,7 +304,7 @@ class HomePageComp extends StatelessWidget {
                                     builderContext: builderContext,
                                     state: state,
                                     dataBloc: dataBloc),
-                            if (state is SubCategoriesLoaded)
+                            if (state is SubcategoriesLoaded)
                               if (state.subcategories.isEmpty)
                                 const SizedBox(
                                     height: 200,
@@ -326,12 +334,11 @@ class HomePageComp extends StatelessWidget {
             buttonColor: theme[10]!,
             onPressed: () {
               if (state is CategoriesLoaded) {
-                addEntry(builderContext, state.data, null, null);
-              } else if (state is SubCategoriesLoaded) {
-                addEntry(builderContext, state.data, state.category, null);
+                addEntry(builderContext, null, null);
+              } else if (state is SubcategoriesLoaded) {
+                addEntry(builderContext, state.category, null);
               } else if (state is EntriesLoaded) {
-                addEntry(builderContext, state.data, state.category,
-                    state.subcategory);
+                addEntry(builderContext, state.category, state.subcategory);
               }
             },
             homeFunction: () {},

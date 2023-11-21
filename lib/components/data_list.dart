@@ -20,7 +20,7 @@ class DataList extends StatelessWidget {
     int length = 0;
     if (state is CategoriesLoaded) {
       length = state.categories.length;
-    } else if (state is SubCategoriesLoaded) {
+    } else if (state is SubcategoriesLoaded) {
       length = state.subcategories.length;
     } else if (state is EntriesLoaded) {
       length = state.entries.length;
@@ -32,22 +32,22 @@ class DataList extends StatelessWidget {
         itemBuilder: (BuildContext builderContext, int index) {
           if (state is CategoriesLoaded) {
             return EntryContainer(
-                onTap: () => dataBloc.add(GoToSubCategoryPage(
-                    data: state.data, category: state.categories[index])),
+                onTap: () => dataBloc
+                    .add(LoadSubcategories(categoryId: state.categories[index])),
                 word: state.categories[index],
                 index: index);
-          } else if (state is SubCategoriesLoaded) {
+          } else if (state is SubcategoriesLoaded) {
             return EntryContainer(
-                onTap: () => dataBloc.add(GoToEntryPage(
-                    data: state.data,
-                    category: state.category,
-                    subcategory: state.subcategories[index])),
+                onTap: () => dataBloc.add(LoadEntries(
+                    categoryId: state.category,
+                    subcategoryId: state.subcategories[index])),
                 word: state.subcategories[index],
                 index: index);
           } else if (state is EntriesLoaded) {
             return EntryContainer(
                 onTap: () {}, word: state.entries[index].value, index: index);
           }
+          return null;
         },
       ),
     );

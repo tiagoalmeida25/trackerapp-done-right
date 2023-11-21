@@ -7,37 +7,28 @@ class DataInitial extends DataState {}
 
 class DataLoading extends DataState {}
 
-class DataLoaded extends DataState {
-  final List<Entry> data;
-
-  DataLoaded({required this.data});
-}
-
 class CategoriesLoaded extends DataState {
-  final List<String> categories;
-  final List<Entry> data;
+  final List<Category> categories;
 
-  CategoriesLoaded({required this.categories, required this.data});
+  CategoriesLoaded({required this.categories});
 }
 
-class SubCategoriesLoaded extends DataState {
-  final List<String> subcategories;
+class SubcategoriesLoaded extends DataState {
+  final List<Subcategory> subcategories;
   final String category;
-  final List<Entry> data;
 
-  SubCategoriesLoaded(
-      {required this.subcategories,
-      required this.category,
-      required this.data});
+  SubcategoriesLoaded({required this.subcategories, required this.category});
 }
 
 class EntriesLoaded extends DataState {
   final List<Entry> entries;
-  final List<Entry> data;
   final String category;
   final String subcategory;
 
-  EntriesLoaded({required this.entries, required this.data, required this.category, required this.subcategory});
+  EntriesLoaded(
+      {required this.entries,
+      required this.category,
+      required this.subcategory});
 }
 
 class DataError extends DataState {

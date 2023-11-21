@@ -20,11 +20,11 @@ class AuthPage extends StatelessWidget {
           builder: (context, state) {
             BlocProvider.of<LoginBloc>(context).add(AuthStart());
 
-            if (state.isLoggedIn) {
+            if (state is LoginSuccess) {
               return BlocProvider(
                 create: (dataContext) =>
                     DataBloc(FirestoreService(user: state.user!)),
-                child: const HomePage(),
+                child: HomePage(username: state.username!),
               );
             } else {
               return const LoginPage();

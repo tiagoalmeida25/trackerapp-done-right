@@ -5,19 +5,32 @@ class DataEvent {}
 
 class LoadUserEvent extends DataEvent {}
 
-class LoadData extends DataEvent {}
-
-class AddEntry extends DataEvent {
+class CreateEntry extends DataEvent {
   final String id;
   final String category;
   final String subcategory;
   final String value;
   final DateTime date;
 
-  AddEntry(
+  CreateEntry(
       {required this.id,
       required this.category,
       required this.subcategory,
+      required this.value,
+      required this.date});
+}
+
+class AddEntry extends DataEvent {
+  final String id;
+  final String categoryId;
+  final String subcategoryId;
+  final String value;
+  final DateTime date;
+
+  AddEntry(
+      {required this.id,
+      required this.categoryId,
+      required this.subcategoryId,
       required this.value,
       required this.date});
 }
@@ -30,53 +43,54 @@ class DeleteEntry extends DataEvent {
 
 class UpdateEntry extends DataEvent {
   final String id;
-  final String category;
-  final String subcategory;
+  final String categoryId;
+  final String subcategoryId;
   final String value;
   final DateTime date;
 
   UpdateEntry(
       {required this.id,
-      required this.category,
-      required this.subcategory,
+      required this.categoryId,
+      required this.subcategoryId,
       required this.value,
       required this.date});
 }
 
+class LoadCategories extends DataEvent {}
+
 class GoToCategoriesPage extends DataEvent {
-  final List<Entry> data;
+  final List<Category> data;
 
   GoToCategoriesPage({required this.data});
 }
 
-class GetSubCategories extends DataEvent {
-  final List<Entry> data;
-  final String category;
+class LoadSubcategories extends DataEvent {
+  final String categoryId;
 
-  GetSubCategories({required this.data, required this.category});
+  LoadSubcategories({required this.categoryId});
 }
 
-class GetEntries extends DataEvent {
+class GoToSubCategoriesPage extends DataEvent {
   final List<Entry> data;
-  final String category;
-  final String subcategory;
+  final String categoryId;
 
-  GetEntries(
-      {required this.data, required this.category, required this.subcategory});
+  GoToSubCategoriesPage({required this.data, required this.categoryId});
 }
 
-class GoToSubCategoryPage extends DataEvent {
-  final List<Entry> data;
-  final String category;
+class LoadEntries extends DataEvent {
+  final String categoryId;
+  final String subcategoryId;
 
-  GoToSubCategoryPage({required this.data, required this.category});
+  LoadEntries({required this.categoryId, required this.subcategoryId});
 }
 
-class GoToEntryPage extends DataEvent {
+class GoToEntriesPage extends DataEvent {
   final List<Entry> data;
-  final String category;
-  final String subcategory;
+  final String categoryId;
+  final String subcategoryId;
 
-  GoToEntryPage(
-      {required this.data, required this.category, required this.subcategory});
+  GoToEntriesPage(
+      {required this.data,
+      required this.categoryId,
+      required this.subcategoryId});
 }

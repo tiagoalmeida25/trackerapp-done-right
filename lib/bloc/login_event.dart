@@ -5,31 +5,31 @@ class LoginEvent {}
 
 class AuthStart extends LoginEvent {}
 
-class LoginButtonPressed extends LoginEvent {
+class Login extends LoginEvent {
   final String email;
   final String password;
 
-  LoginButtonPressed({required this.email, required this.password});
+  Login({required this.email, required this.password});
 }
 
-class SignUpPressed extends LoginEvent {
+class SignUp extends LoginEvent {
   final String email;
   final String password;
   final String confirmPassword;
   final String username;
 
-  SignUpPressed(
+  SignUp(
       {required this.email,
       required this.password,
       required this.confirmPassword,
       required this.username});
 }
 
-class ForgotPasswordPressed extends LoginEvent {
+class ForgotPassword extends LoginEvent {
   final String email;
 
-  ForgotPasswordPressed({required this.email});
+  ForgotPassword({required this.email});
 }
 
-class LogoutPressed extends LoginEvent {}
+class Logout extends LoginEvent {}
 

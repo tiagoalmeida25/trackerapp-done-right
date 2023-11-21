@@ -30,7 +30,7 @@ class LoginPageState extends State<LoginPage> {
 
   void signUserIn(BuildContext context) async {
     BlocProvider.of<LoginBloc>(context).add(
-      LoginButtonPressed(
+      Login(
         email: emailController.text.trim(),
         password: passwordController.text,
       ),
@@ -39,7 +39,25 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+    return BlocConsumer<LoginBloc, LoginState>(listener: (context, state) {
+      if (state is LoginError) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(state.message)));
+      } else if (state is LoginSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content:
+                Text('Login Successful!, Welcome back, ${state.username}!')));
+      }
+    }, builder: (context, state) {
+      if (state is LoginLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      else if(state is SplashScreen){
+        return const Center(child: CircularProgressIndicator());
+        // return const Center(child: AnimatedIcon(icon: AnimatedIcons.ellipsis_search, ));
+      }
+
       return Scaffold(
           backgroundColor: Colors.white,
           body: SingleChildScrollView(

@@ -22,11 +22,17 @@ class CustomBackButton extends StatelessWidget {
             height: 30,
             width: 75,
             color: const Color.fromRGBO(37, 42, 48, 1),
-            child: const Center(
-                child: Text('Back',
-                    style: TextStyle(
-                        color: Color.fromRGBO(186, 186, 186, 1),
-                        fontSize: 16))),
+            padding: const EdgeInsets.only(left: 4, right: 4),
+            child: const Row(
+              children: [
+                Icon(Icons.arrow_back, color: Color.fromRGBO(186, 186, 186, 1), size: 20),
+                Center(
+                    child: Text('Back',
+                        style: TextStyle(
+                            color: Color.fromRGBO(186, 186, 186, 1),
+                            fontSize: 16))),
+              ],
+            ),
           ),
         ),
         onTap: () => onTap());

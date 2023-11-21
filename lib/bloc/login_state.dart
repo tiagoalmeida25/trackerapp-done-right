@@ -1,21 +1,25 @@
 part of 'login_bloc.dart';
 
 @immutable
-class LoginState {
-  final User? user ;
+abstract class LoginState {}
+
+class LoginInitial extends LoginState {}
+
+class SplashScreen extends LoginState{}
+
+class LoginLoading extends LoginState {}
+
+class LoginError extends LoginState {
+  final String message;
+
+  LoginError({required this.message});
+}
+
+class LoginSuccess extends LoginState {
+  final User? user;
   final String? username;
-  final bool isLoggedIn;
-  final bool? emailSent;
 
-  LoginState(
-      {this.user,
-      this.username,
-      required this.isLoggedIn,
-      this.emailSent});
+  LoginSuccess({required this.user, required this.username});
 }
 
-class LoginInitial extends LoginState {
-  
-  LoginInitial() : super(isLoggedIn: false);
-}
-
+class EmailSent extends LoginState {}
