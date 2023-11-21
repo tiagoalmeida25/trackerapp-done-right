@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trackerapp/models/entry.dart';
 import 'package:trackerapp/service/firestore_service.dart';
 

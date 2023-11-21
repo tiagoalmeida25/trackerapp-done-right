@@ -4,12 +4,20 @@ class CustomNavBar extends StatelessWidget {
   final BuildContext context;
   final Color buttonColor;
   final Function() onPressed;
+  final Function() homeFunction;
+  final Function() historyFunction;
+  final Function() chartFunction;
+  final Function() profileFunction;
 
   const CustomNavBar(
       {Key? key,
       required this.context,
       required this.buttonColor,
-      required this.onPressed})
+      required this.onPressed,
+      required this.homeFunction,
+      required this.historyFunction,
+      required this.chartFunction,
+      required this.profileFunction})
       : super(key: key);
 
   @override
@@ -50,23 +58,23 @@ class CustomNavBar extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
-                            onPressed: onPressed,
+                            onPressed: homeFunction,
                             icon: const Icon(Icons.home_filled,
                                 color: Color.fromRGBO(186, 186, 186, 1),
                                 size: 40)),
                         IconButton(
-                            onPressed: onPressed,
+                            onPressed: historyFunction,
                             icon: const Icon(Icons.history,
                                 color: Color.fromRGBO(186, 186, 186, 1),
                                 size: 40)),
                         Container(width: size.width * 0.20),
                         IconButton(
-                            onPressed: onPressed,
+                            onPressed: chartFunction,
                             icon: const Icon(Icons.bar_chart,
                                 color: Color.fromRGBO(186, 186, 186, 1),
                                 size: 40)),
                         IconButton(
-                            onPressed: onPressed,
+                            onPressed: profileFunction,
                             icon: const Icon(Icons.person,
                                 color: Color.fromRGBO(186, 186, 186, 1),
                                 size: 40))

@@ -46,11 +46,19 @@ class _HomePageState extends State<HomePage> {
     username = BlocProvider.of<LoginBloc>(context).state.username!;
   }
 
-  void addEntry(BuildContext oldContext, List<Entry> data) {
-    final TextEditingController category = TextEditingController();
-    final TextEditingController subcategory = TextEditingController();
-    final TextEditingController value = TextEditingController();
+  void addEntry(BuildContext oldContext, List<Entry> data, String? category,
+      String? subcategory) {
+    final TextEditingController categoryController = TextEditingController();
+    final TextEditingController subcategoryController = TextEditingController();
+    final TextEditingController valueController = TextEditingController();
     DateTime selectedDate = DateTime.now();
+
+    if (category != null) {
+      categoryController.text = category;
+    }
+    if (subcategory != null) {
+      subcategoryController.text = subcategory;
+    }
 
     showDialog(
       context: oldContext,
@@ -61,19 +69,19 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 children: [
                   MyTextField(
-                    controller: category,
+                    controller: categoryController,
                     hintText: 'Category',
                     obscureText: false,
                   ),
                   const SizedBox(height: 8),
                   MyTextField(
-                    controller: subcategory,
+                    controller: subcategoryController,
                     hintText: 'SubCategory',
                     obscureText: false,
                   ),
                   const SizedBox(height: 8),
                   MyTextField(
-                    controller: value,
+                    controller: valueController,
                     hintText: 'Value',
                     obscureText: false,
                   ),
@@ -124,9 +132,9 @@ class _HomePageState extends State<HomePage> {
                   BlocProvider.of<DataBloc>(oldContext).add(
                     AddEntry(
                       id: Timestamp.now().toString(),
-                      category: category.text,
-                      subcategory: subcategory.text,
-                      value: value.text,
+                      category: categoryController.text,
+                      subcategory: subcategoryController.text,
+                      value: valueController.text,
                       date: selectedDate,
                     ),
                   );
@@ -375,7 +383,12 @@ class _HomePageState extends State<HomePage> {
                 CustomNavBar(
                   context: builderContext,
                   buttonColor: primary[10]!,
-                  onPressed: () => addEntry(builderContext, state.data),
+                  onPressed: () =>
+                      addEntry(builderContext, state.data, null, null),
+                  homeFunction: () {},
+                  historyFunction: () {},
+                  chartFunction: () {},
+                  profileFunction: () {},
                 )
               ],
             ),
@@ -530,31 +543,63 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       const SizedBox(height: 16),
-                                      Container(
-                                        width: 150,
-                                        padding: const EdgeInsets.only(
-                                            left: 8,
-                                            right: 8,
-                                            top: 4,
-                                            bottom: 4),
-                                        decoration: BoxDecoration(
-                                            color: const Color.fromRGBO(
-                                                37, 42, 48, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(16)),
-                                        child: const Row(
-                                          children: [
-                                            Icon(Icons.add,
-                                                color: Color.fromRGBO(
-                                                    186, 186, 186, 1),
-                                                size: 24),
-                                            Text('New Category',
-                                                style: TextStyle(
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                child: Container(
+                                                  height: 30,
+                                                  width: 75,
+                                                  color: const Color.fromRGBO(
+                                                      37, 42, 48, 1),
+                                                  child: const Center(
+                                                      child: Text('Back',
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      186,
+                                                                      186,
+                                                                      186,
+                                                                      1),
+                                                              fontSize: 16))),
+                                                ),
+                                              ),
+                                              onTap: () => dataBloc.add(
+                                                    GoToCategoriesPage(
+                                                      data: state.data,
+                                                    ),
+                                                  )),
+                                          Container(
+                                            width: 150,
+                                            padding: const EdgeInsets.only(
+                                                left: 8,
+                                                right: 8,
+                                                top: 4,
+                                                bottom: 4),
+                                            decoration: BoxDecoration(
+                                                color: const Color.fromRGBO(
+                                                    37, 42, 48, 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(16)),
+                                            child: const Row(
+                                              children: [
+                                                Icon(Icons.add,
                                                     color: Color.fromRGBO(
                                                         186, 186, 186, 1),
-                                                    fontSize: 16)),
-                                          ],
-                                        ),
+                                                    size: 24),
+                                                Text('New Category',
+                                                    style: TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            186, 186, 186, 1),
+                                                        fontSize: 16)),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       if (state.subcategories.isEmpty)
                                         const SizedBox(
@@ -593,13 +638,6 @@ class _HomePageState extends State<HomePage> {
                                                 },
                                               ),
                                             ),
-                                            EntryContainer(
-                                                onTap: () => dataBloc.add(
-                                                      GoToCategoriesPage(
-                                                          data: state.data),
-                                                    ),
-                                                word: 'Back',
-                                                index: 0),
                                           ],
                                         ),
                                     ])),
@@ -608,7 +646,12 @@ class _HomePageState extends State<HomePage> {
                 CustomNavBar(
                   context: builderContext,
                   buttonColor: primary[10]!,
-                  onPressed: () => addEntry(builderContext, state.data),
+                  onPressed: () => addEntry(
+                      builderContext, state.data, state.category, null),
+                  homeFunction: () {},
+                  historyFunction: () {},
+                  chartFunction: () {},
+                  profileFunction: () {},
                 )
               ],
             ),
@@ -763,31 +806,64 @@ class _HomePageState extends State<HomePage> {
                                         ],
                                       ),
                                       const SizedBox(height: 16),
-                                      Container(
-                                        width: 150,
-                                        padding: const EdgeInsets.only(
-                                            left: 8,
-                                            right: 8,
-                                            top: 4,
-                                            bottom: 4),
-                                        decoration: BoxDecoration(
-                                            color: const Color.fromRGBO(
-                                                37, 42, 48, 1),
-                                            borderRadius:
-                                                BorderRadius.circular(16)),
-                                        child: const Row(
-                                          children: [
-                                            Icon(Icons.add,
-                                                color: Color.fromRGBO(
-                                                    186, 186, 186, 1),
-                                                size: 24),
-                                            Text('New Category',
-                                                style: TextStyle(
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                child: Container(
+                                                  height: 30,
+                                                  width: 75,
+                                                  color: const Color.fromRGBO(
+                                                      37, 42, 48, 1),
+                                                  child: const Center(
+                                                      child: Text('Back',
+                                                          style: TextStyle(
+                                                              color: Color
+                                                                  .fromRGBO(
+                                                                      186,
+                                                                      186,
+                                                                      186,
+                                                                      1),
+                                                              fontSize: 16))),
+                                                ),
+                                              ),
+                                              onTap: () => dataBloc.add(
+                                                    GoToSubCategoryPage(
+                                                      data: state.data,
+                                                      category: state.category,
+                                                    ),
+                                                  )),
+                                          Container(
+                                            width: 150,
+                                            padding: const EdgeInsets.only(
+                                                left: 8,
+                                                right: 8,
+                                                top: 4,
+                                                bottom: 4),
+                                            decoration: BoxDecoration(
+                                                color: const Color.fromRGBO(
+                                                    37, 42, 48, 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(16)),
+                                            child: const Row(
+                                              children: [
+                                                Icon(Icons.add,
                                                     color: Color.fromRGBO(
                                                         186, 186, 186, 1),
-                                                    fontSize: 16)),
-                                          ],
-                                        ),
+                                                    size: 24),
+                                                Text('New Category',
+                                                    style: TextStyle(
+                                                        color: Color.fromRGBO(
+                                                            186, 186, 186, 1),
+                                                        fontSize: 16)),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       if (state.entries.isEmpty)
                                         const SizedBox(
@@ -817,14 +893,6 @@ class _HomePageState extends State<HomePage> {
                                                 },
                                               ),
                                             ),
-                                            EntryContainer(
-                                                onTap: () => dataBloc.add(
-                                                        GoToSubCategoryPage(
-                                                      data: state.data,
-                                                      category: state.category,
-                                                    )),
-                                                word: 'Back',
-                                                index: 0),
                                           ],
                                         ),
                                     ])),
@@ -833,7 +901,16 @@ class _HomePageState extends State<HomePage> {
                 CustomNavBar(
                   context: builderContext,
                   buttonColor: primary[10]!,
-                  onPressed: () => addEntry(builderContext, state.data),
+                  onPressed: () => addEntry(
+                    builderContext,
+                    state.data,
+                    state.category,
+                    state.subcategory,
+                  ),
+                  homeFunction: () {},
+                  historyFunction: () {},
+                  chartFunction: () {},
+                  profileFunction: () {},
                 )
               ],
             ),
