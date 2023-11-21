@@ -38,10 +38,9 @@ class CustomNavBar extends StatelessWidget {
                   painter: BNBCustomPainter(),
                 ),
                 Center(
-                  heightFactor: 1.1,
+                  heightFactor: 1.3,
                   child: FloatingActionButton(
                     backgroundColor: buttonColor,
-                    elevation: 0.1,
                     onPressed: onPressed,
                     child: const Icon(
                       Icons.add,
@@ -52,32 +51,26 @@ class CustomNavBar extends StatelessWidget {
                 Container(
                     width: size.width,
                     height: 90,
-                    padding:
-                        const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                    padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
                             onPressed: homeFunction,
                             icon: const Icon(Icons.home_filled,
-                                color: Color.fromRGBO(186, 186, 186, 1),
-                                size: 40)),
+                                color: Color.fromRGBO(186, 186, 186, 1), size: 40)),
                         IconButton(
                             onPressed: historyFunction,
-                            icon: const Icon(Icons.history,
-                                color: Color.fromRGBO(186, 186, 186, 1),
-                                size: 40)),
+                            icon:
+                                const Icon(Icons.history, color: Color.fromRGBO(186, 186, 186, 1), size: 40)),
                         Container(width: size.width * 0.20),
                         IconButton(
                             onPressed: chartFunction,
                             icon: const Icon(Icons.bar_chart,
-                                color: Color.fromRGBO(186, 186, 186, 1),
-                                size: 40)),
+                                color: Color.fromRGBO(186, 186, 186, 1), size: 40)),
                         IconButton(
                             onPressed: profileFunction,
-                            icon: const Icon(Icons.person,
-                                color: Color.fromRGBO(186, 186, 186, 1),
-                                size: 40))
+                            icon: const Icon(Icons.person, color: Color.fromRGBO(186, 186, 186, 1), size: 40))
                       ],
                     )),
               ],
@@ -99,13 +92,11 @@ class BNBCustomPainter extends CustomPainter {
     Path path = Path()..moveTo(42, 16);
 
     path.lineTo(size.width * 0.40, 16);
-    path.arcToPoint(Offset(size.width * 0.60, 16),
-        radius: const Radius.circular(45.0), clockwise: true);
+    path.arcToPoint(Offset(size.width * 0.60, 16), radius: const Radius.circular(45.0), clockwise: true);
     path.lineTo(size.width - 42, 16);
     path.quadraticBezierTo(size.width - 16, 16, size.width - 16, 42);
     path.lineTo(size.width - 16, size.height - 42);
-    path.quadraticBezierTo(
-        size.width - 16, size.height - 16, size.width - 42, size.height - 16);
+    path.quadraticBezierTo(size.width - 16, size.height - 16, size.width - 42, size.height - 16);
     path.lineTo(42, size.height - 16);
     path.quadraticBezierTo(16, size.height - 16, 16, size.height - 42);
     path.lineTo(16, 42);

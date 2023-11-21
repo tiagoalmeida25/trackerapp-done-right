@@ -22,78 +22,32 @@ class DataBloc extends Bloc<DataEvent, DataState> {
       }
     }));
 
-    // on<GoToCategoriesPage>(
-    //   (event, emit) {
-    //     try {
-    //       emit(DataLoading());
-    //       final data = firestoreService.getCategories(event.data);
-    //       emit(CategoriesLoaded(categories: data, data: event.data));
-    //     } catch (e) {
-    //       emit(DataError(message: e.toString()));
-    //     }
-    //   },
-    // );
-
     on<LoadSubcategories>(((event, emit) async {
       try {
         emit(DataLoading());
-        final data =
-            await firestoreService.getSubcategories(event.categoryId).first;
-        emit(SubcategoriesLoaded(
-            subcategories: data, category: event.categoryId));
+        final data = await firestoreService.getSubcategories(event.categoryId).first;
+        emit(
+            SubcategoriesLoaded(subcategories: data, category: event.category, categoryId: event.categoryId));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }
     }));
 
-    // on<GoToSubCategoryPage>(
-    //   (event, emit) {
-    //     try {
-    //       emit(DataLoading());
-    //       final data =
-    //           firestoreService.getSubCategories(event.data, event.category);
-    //       emit(SubCategoriesLoaded(
-    //           subcategories: data, data: event.data, category: event.category));
-    //     } catch (e) {
-    //       emit(DataError(message: e.toString()));
-    //     }
-    //   },
-    // );
-
     on<LoadEntries>(((event, emit) async {
       try {
         emit(DataLoading());
-        final data = await firestoreService
-            .getEntries(event.categoryId, event.subcategoryId)
-            .first;
+        final data = await firestoreService.getEntries(event.categoryId, event.subcategoryId).first;
         emit(EntriesLoaded(
           entries: data,
-          category: event.categoryId,
-          subcategory: event.subcategoryId,
+          category: event.category,
+          subcategory: event.subcategory,
+          categoryId: event.categoryId,
+          subcategoryId: event.subcategoryId,
         ));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }
     }));
-
-    // on<GoToEntryPage>(
-    //   (event, emit) {
-    //     try {
-    //       emit(DataLoading());
-    //       final data = firestoreService.getEntries(
-    //           event.data, event.category, event.subcategory);
-    //       data.sort((a, b) => b.date.compareTo(a.date));
-    //       emit(EntriesLoaded(
-    //         entries: data,
-    //         data: event.data,
-    //         category: event.category,
-    //         subcategory: event.subcategory,
-    //       ));
-    //     } catch (e) {
-    //       emit(DataError(message: e.toString()));
-    //     }
-    //   },
-    // );
 
     // when entering all fields
     on<CreateEntry>((event, emit) async {

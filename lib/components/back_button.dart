@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 
-
 class CustomBackButton extends StatelessWidget {
   final Function() onTap;
   final dynamic state;
   final dynamic dataBloc;
 
-  const CustomBackButton(
-      {Key? key,
-      required this.onTap,
-      required this.state,
-      required this.dataBloc})
+  const CustomBackButton({Key? key, required this.onTap, required this.state, required this.dataBloc})
       : super(key: key);
 
   @override
@@ -28,9 +23,7 @@ class CustomBackButton extends StatelessWidget {
                 Icon(Icons.arrow_back, color: Color.fromRGBO(186, 186, 186, 1), size: 20),
                 Center(
                     child: Text('Back',
-                        style: TextStyle(
-                            color: Color.fromRGBO(186, 186, 186, 1),
-                            fontSize: 16))),
+                        style: TextStyle(color: Color.fromRGBO(186, 186, 186, 1), fontSize: 16))),
               ],
             ),
           ),

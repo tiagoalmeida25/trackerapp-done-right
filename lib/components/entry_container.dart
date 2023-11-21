@@ -7,27 +7,21 @@ class EntryContainer extends StatelessWidget {
   final String word;
   final int index;
 
-  const EntryContainer({
-    Key? key,
-    required this.onTap,
-    required this.word,
-    required this.index,
-  }) : super(key: key);
+  const EntryContainer({Key? key, required this.onTap, required this.word, required this.index})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double fontSize = 20.0;
     TextPainter textPainter = TextPainter(
-      text: TextSpan(
-        text: word,
-        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-      ),
+      text: TextSpan(text: word, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold)),
       maxLines: 1,
       textDirection: TextDirection.ltr,
     );
     textPainter.layout();
     double wordWidth = textPainter.width;
     double wordHeight = textPainter.height;
+
     return GestureDetector(
       onTap: onTap,
       child: Stack(
@@ -52,21 +46,16 @@ class EntryContainer extends StatelessWidget {
             ),
           ),
           Padding(
-            padding:
-                const EdgeInsets.only(bottom: 8, left: 24, right: 8, top: 10),
+            padding: const EdgeInsets.only(bottom: 8, left: 24, right: 8, top: 10),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(32),
               child: Container(
                 width: wordWidth + 24,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 color: Colors.black.withOpacity(0.3),
                 child: Text(
                   word,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
             ),

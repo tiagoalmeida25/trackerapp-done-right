@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trackerapp/bloc/login_bloc.dart';
 import 'package:trackerapp/router/app_router.dart';
 import 'firebase_options.dart';
 
@@ -9,8 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(MainApp(
       appRouter: AppRouter(),
     ));
@@ -23,10 +24,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/auth',
-      onGenerateRoute: appRouter.onGenerateRoute,
+    return BlocProvider(
+      create: (context) => LoginBloc(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/auth',
+        onGenerateRoute: appRouter.onGenerateRoute,
+      ),
     );
   }
 }

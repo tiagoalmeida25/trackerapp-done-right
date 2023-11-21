@@ -19,8 +19,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (user != null) {
           final username = await _firebaseAuthService.getUsername(user);
           emit(LoginSuccess(user: user, username: username));
-        } else {
-          emit(LoginInitial());
+        }
+        else{
+          emit(NoUser());
         }
       } catch (e) {
         emit(LoginError(message: e.toString()));
@@ -29,8 +30,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<Login>(((event, emit) async {
       try {
         emit(LoginLoading());
-        final user = await _firebaseAuthService.login(
-            event.email.trim(), event.password);
+        final user = await _firebaseAuthService.login(event.email.trim(), event.password);
         final username = await _firebaseAuthService.getUsername(user!);
 
         emit(LoginSuccess(user: user, username: username));
@@ -46,13 +46,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
 
       try {
-        emit(LoginLoading());
+        emit(RegisterLoading());
 
-        final user = await _firebaseAuthService.signUp(
-            event.email.trim(), event.password, event.username);
+        final user = await _firebaseAuthService.signUp(event.email.trim(), event.password, event.username);
         emit(LoginSuccess(user: user, username: event.username));
       } catch (e) {
-        emit(LoginError(message: e.toString()));
+        emit(RegisterError(message: e.toString()));
       }
     }));
 
@@ -64,6 +63,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(EmailSent());
       } catch (e) {
         emit(LoginError(message: e.toString()));
+      }
+    }));
+
+    on<Logout>(((event, emit) {
+      try {
+        emit(LoginLoading());
+        _firebaseAuthService.signOut();
+        emit(LogoutSuccess());
+      } catch (e) {
+        emit(LogoutError(message: e.toString()));
       }
     }));
   }

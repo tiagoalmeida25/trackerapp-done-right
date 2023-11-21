@@ -9,22 +9,14 @@ class FirestoreService {
 
   FirestoreService({required this.user});
 
-  CollectionReference get _dataCollectionReference => FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .collection('entries');
+  CollectionReference get _entriesCollectionReference =>
+      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('entries');
 
   CollectionReference get _categoriesCollectionReference =>
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('categories');
+      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('categories');
 
   CollectionReference get _subcategoriesCollectionReference =>
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('subcategories');
+      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('subcategories');
 
   Stream<List<Category>> getCategories() {
     return _categoriesCollectionReference.snapshots().map((snapshot) {
@@ -60,20 +52,16 @@ class FirestoreService {
     });
 
     return data.map((event) {
-      return event
-          .where((element) => element != null)
-          .toList()
-          .cast<Subcategory>();
+      return event.where((element) => element != null).toList().cast<Subcategory>();
     });
   }
 
   Stream<List<Entry>> getEntries(String categoryId, String subcategoryId) {
-    final data = _dataCollectionReference.snapshots().map((snapshot) {
+    final data = _entriesCollectionReference.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
-        if (data['category'] != categoryId ||
-            data['subcategory'] != subcategoryId) {
+        if (data['category'] != categoryId || data['subcategory'] != subcategoryId) {
           return null;
         }
 
@@ -92,18 +80,15 @@ class FirestoreService {
     });
   }
 
-  Future<void> createEntry(
-      String category, String subcategory, String value, DateTime date) async {
+  Future<void> createEntry(String category, String subcategory, String value, DateTime date) async {
     String categoryId = '';
     String subcategoryId = '';
 
-    final categoryQuery = await _categoriesCollectionReference
-        .where('category', isEqualTo: category)
-        .get();
+    final categoryQuery = await _categoriesCollectionReference.where('category', isEqualTo: category).get();
 
     if (categoryQuery.docs.isEmpty) {
       final categoryDoc = await _categoriesCollectionReference.add({
-        'category': category,
+        'category': category.trim(),
         'category_id': _categoriesCollectionReference.doc().id,
         'created_at': date,
         'updated_at': date,
@@ -117,13 +102,12 @@ class FirestoreService {
       });
     }
 
-    final subcategoryQuery = await _subcategoriesCollectionReference
-        .where('subcategory', isEqualTo: subcategory)
-        .get();
+    final subcategoryQuery =
+        await _subcategoriesCollectionReference.where('subcategory', isEqualTo: subcategory).get();
 
     if (subcategoryQuery.docs.isEmpty) {
       final subcategoryDoc = await _subcategoriesCollectionReference.add({
-        'subcategory': subcategory,
+        'subcategory': subcategory.trim(),
         'category_id': categoryId,
         'subcategory_id': _subcategoriesCollectionReference.doc().id,
         'created_at': date,
@@ -138,23 +122,21 @@ class FirestoreService {
       });
     }
 
-    await _dataCollectionReference.add({
-      'id': _dataCollectionReference.doc().id,
+    await _entriesCollectionReference.add({
+      'id': _entriesCollectionReference.doc().id,
       'category': categoryId,
       'subcategory': subcategoryId,
-      'value': value,
+      'value': value.trim(),
       'date': date,
     });
   }
 
-
-  Future<void> addEntry(String categoryId, String subcategoryId, String value,
-      DateTime date) async {
-    await _dataCollectionReference.add({
-      'id': _dataCollectionReference.doc().id,
+  Future<void> addEntry(String categoryId, String subcategoryId, String value, DateTime date) async {
+    await _entriesCollectionReference.add({
+      'id': _entriesCollectionReference.doc().id,
       'category': categoryId,
       'subcategory': subcategoryId,
-      'value': value,
+      'value': value.trim(),
       'date': date,
     });
 
@@ -176,8 +158,7 @@ class FirestoreService {
     });
   }
 
-  Future<void> createSubcategory(
-      String subcategoryName, String categoryId, DateTime date) async {
+  Future<void> createSubcategory(String subcategoryName, String categoryId, DateTime date) async {
     await _subcategoriesCollectionReference.add({
       'category_id': categoryId,
       'subcategory_id': _subcategoriesCollectionReference.doc().id,
@@ -188,12 +169,11 @@ class FirestoreService {
   }
 
   Future<void> deleteData(String id) async {
-    await _dataCollectionReference.doc(id).delete();
+    await _entriesCollectionReference.doc(id).delete();
   }
 
-  Future<void> updateData(String id, String category, String subcategory,
-      String value, DateTime date) async {
-    await _dataCollectionReference.doc(id).update({
+  Future<void> updateData(String id, String category, String subcategory, String value, DateTime date) async {
+    await _entriesCollectionReference.doc(id).update({
       'category': category,
       'subcategory': subcategory,
       'value': value,

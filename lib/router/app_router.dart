@@ -17,7 +17,7 @@ class AppRouter {
       case '/forgotpassword':
         return MaterialPageRoute(builder: (_) => const ForgotPasswordPage());
       case '/home':
-        return MaterialPageRoute(builder: (_) => const HomePage());
+        return MaterialPageRoute(builder: (_) => const HomePage(username: ''));
       default:
         return null;
     }

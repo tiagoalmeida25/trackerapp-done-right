@@ -58,39 +58,22 @@ class UpdateEntry extends DataEvent {
 
 class LoadCategories extends DataEvent {}
 
-class GoToCategoriesPage extends DataEvent {
-  final List<Category> data;
-
-  GoToCategoriesPage({required this.data});
-}
-
 class LoadSubcategories extends DataEvent {
+  final String category;
   final String categoryId;
 
-  LoadSubcategories({required this.categoryId});
-}
-
-class GoToSubCategoriesPage extends DataEvent {
-  final List<Entry> data;
-  final String categoryId;
-
-  GoToSubCategoriesPage({required this.data, required this.categoryId});
+  LoadSubcategories({required this.category, required this.categoryId});
 }
 
 class LoadEntries extends DataEvent {
+  final String category;
   final String categoryId;
+  final String subcategory;
   final String subcategoryId;
 
-  LoadEntries({required this.categoryId, required this.subcategoryId});
-}
-
-class GoToEntriesPage extends DataEvent {
-  final List<Entry> data;
-  final String categoryId;
-  final String subcategoryId;
-
-  GoToEntriesPage(
-      {required this.data,
+  LoadEntries(
+      {required this.category,
       required this.categoryId,
+      required this.subcategory,
       required this.subcategoryId});
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:trackerapp/bloc/data_bloc.dart';
-
 import 'package:trackerapp/components/entry_container.dart';
 
 class DataList extends StatelessWidget {
@@ -8,11 +7,7 @@ class DataList extends StatelessWidget {
   final dynamic state;
   final dynamic dataBloc;
 
-  const DataList(
-      {Key? key,
-      required this.builderContext,
-      required this.state,
-      required this.dataBloc})
+  const DataList({Key? key, required this.builderContext, required this.state, required this.dataBloc})
       : super(key: key);
 
   @override
@@ -32,20 +27,28 @@ class DataList extends StatelessWidget {
         itemBuilder: (BuildContext builderContext, int index) {
           if (state is CategoriesLoaded) {
             return EntryContainer(
-                onTap: () => dataBloc
-                    .add(LoadSubcategories(categoryId: state.categories[index])),
-                word: state.categories[index],
-                index: index);
+              onTap: () => dataBloc.add(LoadSubcategories(
+                  categoryId: state.categories[index].categoryId,
+                  category: state.categories[index].category)),
+              word: state.categories[index].category,
+              index: index,
+            );
           } else if (state is SubcategoriesLoaded) {
             return EntryContainer(
                 onTap: () => dataBloc.add(LoadEntries(
-                    categoryId: state.category,
-                    subcategoryId: state.subcategories[index])),
-                word: state.subcategories[index],
+                      category: state.category,
+                      categoryId: state.categoryId,
+                      subcategory: state.subcategories[index].subcategory,
+                      subcategoryId: state.subcategories[index].subcategoryId,
+                    )),
+                word: state.subcategories[index].subcategory,
                 index: index);
           } else if (state is EntriesLoaded) {
             return EntryContainer(
-                onTap: () {}, word: state.entries[index].value, index: index);
+              onTap: () {},
+              word: state.entries[index].value,
+              index: index,
+            );
           }
           return null;
         },

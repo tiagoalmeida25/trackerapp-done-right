@@ -16,19 +16,24 @@ class CategoriesLoaded extends DataState {
 class SubcategoriesLoaded extends DataState {
   final List<Subcategory> subcategories;
   final String category;
+  final String categoryId;
 
-  SubcategoriesLoaded({required this.subcategories, required this.category});
+  SubcategoriesLoaded({required this.subcategories, required this.category, required this.categoryId});
 }
 
 class EntriesLoaded extends DataState {
   final List<Entry> entries;
   final String category;
+  final String categoryId;
   final String subcategory;
+  final String subcategoryId;
 
   EntriesLoaded(
       {required this.entries,
       required this.category,
-      required this.subcategory});
+      required this.categoryId,
+      required this.subcategory,
+      required this.subcategoryId});
 }
 
 class DataError extends DataState {
