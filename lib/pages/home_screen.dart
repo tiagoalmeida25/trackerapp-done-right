@@ -5,23 +5,23 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:trackerapp/app_colors.dart';
-import 'package:trackerapp/bloc/data_bloc.dart';
-import 'package:trackerapp/bloc/login_bloc.dart';
+import 'package:trackerapp/bloc/app/app_bloc.dart';
+import 'package:trackerapp/bloc/data/data_bloc.dart';
 import 'package:trackerapp/components/custom_nav_bar.dart';
 import 'package:trackerapp/components/home_page_comp.dart';
 import 'package:trackerapp/components/my_textfield.dart';
 import 'package:intl/intl.dart';
 
-class HomePage extends StatefulWidget {
-  final String username;
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
-  const HomePage({Key? key, required this.username}) : super(key: key);
+  static Page page() => MaterialPage<void>(child: HomeScreen());
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   // String selectedPalette = "";
   // final List<String> paletteNames = [
   //   "primary",
@@ -33,6 +33,8 @@ class _HomePageState extends State<HomePage> {
   //   "palettered",
   //   "paletteredtoyellow",
   // ];
+
+  String username = "";
   @override
   void initState() {
     super.initState();
@@ -60,12 +62,26 @@ class _HomePageState extends State<HomePage> {
               content: SizedBox(
                   height: 250,
                   child: Column(children: [
-                    MyTextField(controller: categoryController, hintText: 'Category', obscureText: false),
+                    MyTextField(
+                      controller: categoryController,
+                      hintText: 'Category',
+                      obscureText: false,
+                      onChanged: () {},
+                    ),
                     const SizedBox(height: 8),
                     MyTextField(
-                        controller: subcategoryController, hintText: 'SubCategory', obscureText: false),
+                      controller: subcategoryController,
+                      hintText: 'SubCategory',
+                      obscureText: false,
+                      onChanged: () {},
+                    ),
                     const SizedBox(height: 8),
-                    MyTextField(controller: valueController, hintText: 'Value', obscureText: false),
+                    MyTextField(
+                      controller: valueController,
+                      hintText: 'Value',
+                      obscureText: false,
+                      onChanged: () {},
+                    ),
                     const SizedBox(height: 8),
                     DateTimeField(
                         style: const TextStyle(color: Colors.white),
@@ -132,7 +148,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void logout(BuildContext context) {
-    BlocProvider.of<LoginBloc>(context).add(Logout());
+    context.read<AppBloc>().add(AppLogoutRequested());
   }
 
   Widget addNewSomething(String text, Function() onTap, dynamic state) {
@@ -155,6 +171,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.select((AppBloc bloc) => bloc.state.user)!;
+    String username = user.username!;
+
     final DataBloc dataBloc = BlocProvider.of<DataBloc>(context);
 
     return Scaffold(
@@ -170,6 +189,16 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
+                      // IconButton(
+                      //     onPressed: () {
+                      //       context.read<AppBloc>().add(AppLogoutRequested());
+                      //     },
+                      //     icon: const Icon(Icons.exit_to_app)),
+                      // CircleAvatar(
+                      //   radius: 50,
+                      //   backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+                      //   child: user.photoUrl == null ? const Icon(Icons.person) : null,
+                      // ),
                       Container(
                           decoration: BoxDecoration(boxShadow: [
                             BoxShadow(
@@ -197,7 +226,7 @@ class _HomePageState extends State<HomePage> {
                                             fontSize: 36,
                                             fontWeight: FontWeight.bold,
                                           )),
-                                      Text(widget.username,
+                                      Text(username,
                                           style: TextStyle(
                                             color: primary[10],
                                             fontSize: 36,
@@ -291,12 +320,11 @@ class _HomePageState extends State<HomePage> {
                                   }
                                 },
                                 builder: (builderContext, state) {
-                                  print(state);
                                   if (state is CategoriesLoaded) {
                                     return HomePageComp(
                                       builderContext: builderContext,
                                       theme: primary,
-                                      username: widget.username,
+                                      username: username,
                                       state: state,
                                       dataBloc: dataBloc,
                                       buttonNewSomething: addNewSomething('New Category', () {}, state),
@@ -306,7 +334,7 @@ class _HomePageState extends State<HomePage> {
                                     return HomePageComp(
                                       builderContext: builderContext,
                                       theme: primary,
-                                      username: widget.username,
+                                      username: username,
                                       state: state,
                                       dataBloc: dataBloc,
                                       buttonNewSomething: addNewSomething('New Subcategory', () {}, state),
@@ -316,7 +344,7 @@ class _HomePageState extends State<HomePage> {
                                     return HomePageComp(
                                       builderContext: builderContext,
                                       theme: primary,
-                                      username: widget.username,
+                                      username: username,
                                       state: state,
                                       dataBloc: dataBloc,
                                       buttonNewSomething: addNewSomething('', () {}, state),
@@ -327,7 +355,6 @@ class _HomePageState extends State<HomePage> {
                                   } else {
                                     return const Center(child: Text('Unknown state'));
                                   }
-                                  
                                 },
                               ),
                             ],

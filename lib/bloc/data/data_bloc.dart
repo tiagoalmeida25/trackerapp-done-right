@@ -35,7 +35,6 @@ class DataBloc extends Bloc<DataEvent, DataState> {
 
     on<LoadEntries>(((event, emit) async {
       try {
-        emit(DataLoading());
         final data = await firestoreService.getEntries(event.categoryId, event.subcategoryId).first;
         emit(EntriesLoaded(
           entries: data,
@@ -52,7 +51,6 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     // when entering all fields
     on<CreateEntry>((event, emit) async {
       try {
-        emit(DataLoading());
         await firestoreService.createEntry(
           event.category,
           event.subcategory,

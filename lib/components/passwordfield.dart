@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
+  final Function onChanged;
 
   const PasswordField({
     Key? key,
     required this.controller,
     required this.hintText,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
@@ -51,6 +53,7 @@ class PasswordFieldState extends State<PasswordField> {
             ),
           ),
         ),
+        onChanged: widget.onChanged(),
       ),
     );
   }
