@@ -1,22 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:trackerapp/models/entry.dart';
 import 'package:trackerapp/models/category.dart';
 import 'package:trackerapp/models/subcategory.dart';
 
 class FirestoreService {
-  final User user;
+  final String id;
 
-  FirestoreService({required this.user});
+  FirestoreService({required this.id});
 
   CollectionReference get _entriesCollectionReference =>
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('entries');
+      FirebaseFirestore.instance.collection('users').doc(id).collection('entries');
 
   CollectionReference get _categoriesCollectionReference =>
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('categories');
+      FirebaseFirestore.instance.collection('users').doc(id).collection('categories');
 
   CollectionReference get _subcategoriesCollectionReference =>
-      FirebaseFirestore.instance.collection('users').doc(user.uid).collection('subcategories');
+      FirebaseFirestore.instance.collection('users').doc(id).collection('subcategories');
 
   Stream<List<Category>> getCategories() {
     return _categoriesCollectionReference.snapshots().map((snapshot) {

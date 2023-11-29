@@ -23,6 +23,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         ) {
     on<AppUserChanged>(_onUserChanged);
     on<AppLogoutRequested>(_onLogoutRequested);
+
     _userSubscription = _authRepository.user.listen((user) => add(AppUserChanged(user)));
   }
 
@@ -30,6 +31,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     AppUserChanged event,
     Emitter<AppState> emit,
   ) {
+    print('user: ${event.user}');
     emit(event.user.isNotEmpty ? AppState.authenticated(event.user) : const AppState.unauthenticated());
   }
 

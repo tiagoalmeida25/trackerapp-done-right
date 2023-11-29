@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trackerapp/bloc/data_bloc.dart';
+import 'package:trackerapp/bloc/data/data_bloc.dart';
 import 'package:trackerapp/components/entry_container.dart';
 
 class DataList extends StatelessWidget {
@@ -48,6 +48,7 @@ class DataList extends StatelessWidget {
               onTap: () {},
               word: state.entries[index].value,
               index: index,
+              date: state.entries[index].date
             );
           }
           return null;

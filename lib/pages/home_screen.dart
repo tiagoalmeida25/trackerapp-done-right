@@ -9,13 +9,13 @@ import 'package:trackerapp/bloc/app/app_bloc.dart';
 import 'package:trackerapp/bloc/data/data_bloc.dart';
 import 'package:trackerapp/components/custom_nav_bar.dart';
 import 'package:trackerapp/components/home_page_comp.dart';
-import 'package:trackerapp/components/my_textfield.dart';
 import 'package:intl/intl.dart';
+import 'package:trackerapp/service/firestore_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  static Page page() => MaterialPage<void>(child: HomeScreen());
+  static Page page() => const MaterialPage<void>(child: HomeScreen());
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -38,21 +38,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<DataBloc>(context).add(LoadCategories());
   }
 
-  void addEntry(BuildContext oldContext) {
+  void addEntry(BuildContext oldContext, String? category, String? subcategory) {
     final TextEditingController categoryController = TextEditingController();
     final TextEditingController subcategoryController = TextEditingController();
     final TextEditingController valueController = TextEditingController();
     DateTime selectedDate = DateTime.now();
 
-    // if (category != null) {
-    //   categoryController.text = category;
-    // }
-    // if (subcategory != null) {
-    //   subcategoryController.text = subcategory;
-    // }
+    if (category != null) {
+      categoryController.text = category;
+    }
+    if (subcategory != null) {
+      subcategoryController.text = subcategory;
+    }
 
     showDialog(
       context: oldContext,
@@ -60,27 +59,48 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: const Color.fromRGBO(37, 42, 48, 1),
               title: const Text('Add Entry', style: TextStyle(color: Colors.white)),
               content: SizedBox(
-                  height: 250,
+                  height: 300,
                   child: Column(children: [
-                    MyTextField(
+                    TextField(
                       controller: categoryController,
-                      hintText: 'Category',
-                      obscureText: false,
-                      onChanged: () {},
+                      decoration: const InputDecoration(
+                        label: Text(
+                          'Category',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      cursorColor: Colors.white,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    MyTextField(
+                    TextField(
                       controller: subcategoryController,
-                      hintText: 'SubCategory',
-                      obscureText: false,
-                      onChanged: () {},
+                      decoration: const InputDecoration(
+                        label: Text(
+                          'Subcategory',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      cursorColor: Colors.white,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    MyTextField(
+                    TextField(
                       controller: valueController,
-                      hintText: 'Value',
-                      obscureText: false,
-                      onChanged: () {},
+                      decoration: const InputDecoration(
+                        label: Text(
+                          'Value',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      cursorColor: Colors.white,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     DateTimeField(
@@ -141,7 +161,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Add'),
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(color: Colors.black),
+                  ),
                 )
               ])),
     );
@@ -153,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget addNewSomething(String text, Function() onTap, dynamic state) {
     return Container(
+      height: 35,
       width: state is SubcategoriesLoaded ? 175 : 150,
       padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
       decoration: BoxDecoration(
@@ -174,205 +198,218 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = context.select((AppBloc bloc) => bloc.state.user)!;
     String username = user.username!;
 
-    final DataBloc dataBloc = BlocProvider.of<DataBloc>(context);
-
-    return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: MediaQuery.of(context).size.width,
-                    minHeight: MediaQuery.of(context).size.height,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: <Widget>[
-                      // IconButton(
-                      //     onPressed: () {
-                      //       context.read<AppBloc>().add(AppLogoutRequested());
-                      //     },
-                      //     icon: const Icon(Icons.exit_to_app)),
-                      // CircleAvatar(
-                      //   radius: 50,
-                      //   backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-                      //   child: user.photoUrl == null ? const Icon(Icons.person) : null,
-                      // ),
-                      Container(
-                          decoration: BoxDecoration(boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.5),
-                              spreadRadius: 2,
-                              blurRadius: 30,
-                              offset: const Offset(2, 0),
-                            ),
-                          ]),
-                          child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(32),
-                                bottomRight: Radius.circular(32),
+    return BlocProvider(
+      create: (context) => DataBloc(FirestoreService(id: user.id)),
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width,
+                      minHeight: MediaQuery.of(context).size.height,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: <Widget>[
+                        // const SizedBox(height: 50,),
+                        // IconButton(
+                        //     onPressed: () {
+                        //       context.read<AppBloc>().add(AppLogoutRequested());
+                        //     },
+                        //     icon: const Icon(Icons.exit_to_app)),
+                        // CircleAvatar(
+                        //   radius: 50,
+                        //   backgroundImage: user.photo != null ? NetworkImage(user.photo!) : null,
+                        //   child: user.photo == null ? const Icon(Icons.person) : null,
+                        // ),
+                        Container(
+                            decoration: BoxDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 30,
+                                offset: const Offset(2, 0),
                               ),
-                              child: Container(
-                                  height: 110,
-                                  padding: const EdgeInsets.only(left: 20, top: 35),
-                                  color: const Color.fromRGBO(37, 42, 48, 1),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      const Text('Welcome, ',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 36,
-                                            fontWeight: FontWeight.bold,
-                                          )),
-                                      Text(username,
-                                          style: TextStyle(
-                                            color: primary[10],
-                                            fontSize: 36,
-                                            fontWeight: FontWeight.bold,
-                                          )),
-                                      const Text('!',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 36,
-                                            fontWeight: FontWeight.bold,
-                                          ))
-                                    ],
-                                  )))),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
-                                      child: Container(
-                                          color: const Color.fromRGBO(37, 42, 48, 1),
-                                          padding: const EdgeInsets.only(left: 8, right: 8, bottom: 6),
-                                          width: 70,
-                                          child: const Row(
-                                            crossAxisAlignment: CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                  height: 16,
-                                                  child: Icon(
-                                                    Icons.list_rounded,
-                                                    color: Color.fromRGBO(186, 186, 186, 1),
-                                                    size: 24,
-                                                  )),
-                                              SizedBox(width: 4),
-                                              Padding(
-                                                  padding: EdgeInsets.only(top: 4.0),
-                                                  child: Text(
-                                                    'All',
-                                                    style: TextStyle(
+                            ]),
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(32),
+                                  bottomRight: Radius.circular(32),
+                                ),
+                                child: Container(
+                                    height: 110,
+                                    padding: const EdgeInsets.only(left: 20, top: 35),
+                                    color: const Color.fromRGBO(37, 42, 48, 1),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        const Text('Welcome, ',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 36,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                        Text(username,
+                                            style: TextStyle(
+                                              color: primary[10],
+                                              fontSize: 36,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                        const Text('!',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 36,
+                                              fontWeight: FontWeight.bold,
+                                            ))
+                                      ],
+                                    )))),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: Container(
+                                            color: const Color.fromRGBO(37, 42, 48, 1),
+                                            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 6),
+                                            width: 70,
+                                            child: const Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                    height: 16,
+                                                    child: Icon(
+                                                      Icons.list_rounded,
                                                       color: Color.fromRGBO(186, 186, 186, 1),
-                                                      fontSize: 16,
-                                                    ),
-                                                  ))
-                                            ],
-                                          ))),
-                                  Row(
-                                    children: [
-                                      ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            color: const Color.fromRGBO(37, 42, 48, 1),
-                                          )),
-                                      const SizedBox(width: 8),
-                                      ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            color: const Color.fromRGBO(37, 42, 48, 1),
-                                          )),
-                                      const SizedBox(width: 8),
-                                      ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
-                                          child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            color: const Color.fromRGBO(37, 42, 48, 1),
-                                          ))
-                                    ],
-                                  )
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              BlocConsumer<DataBloc, DataState>(
-                                listener: (listennerContext, state) {
-                                  if (state is DataError) {
-                                    ScaffoldMessenger.of(listennerContext)
-                                        .showSnackBar(SnackBar(content: Text(state.message)));
-                                    Timer(const Duration(seconds: 30), () {
+                                                      size: 24,
+                                                    )),
+                                                SizedBox(width: 4),
+                                                Padding(
+                                                    padding: EdgeInsets.only(top: 4.0),
+                                                    child: Text(
+                                                      'All',
+                                                      style: TextStyle(
+                                                        color: Color.fromRGBO(186, 186, 186, 1),
+                                                        fontSize: 16,
+                                                      ),
+                                                    ))
+                                              ],
+                                            ))),
+                                    Row(
+                                      children: [
+                                        ClipRRect(
+                                            borderRadius: BorderRadius.circular(16),
+                                            child: Container(
+                                              height: 30,
+                                              width: 30,
+                                              color: const Color.fromRGBO(37, 42, 48, 1),
+                                            )),
+                                        const SizedBox(width: 8),
+                                        ClipRRect(
+                                            borderRadius: BorderRadius.circular(16),
+                                            child: Container(
+                                              height: 30,
+                                              width: 30,
+                                              color: const Color.fromRGBO(37, 42, 48, 1),
+                                            )),
+                                        const SizedBox(width: 8),
+                                        ClipRRect(
+                                            borderRadius: BorderRadius.circular(16),
+                                            child: Container(
+                                              height: 30,
+                                              width: 30,
+                                              color: const Color.fromRGBO(37, 42, 48, 1),
+                                            ))
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                BlocConsumer<DataBloc, DataState>(
+                                  listener: (listennerContext, state) {
+                                    if (state is DataError) {
+                                      ScaffoldMessenger.of(listennerContext)
+                                          .showSnackBar(SnackBar(content: Text(state.message)));
+                                      Timer(const Duration(seconds: 30), () {
+                                        BlocProvider.of<DataBloc>(listennerContext).add(LoadCategories());
+                                      });
+                                    } else if (state is DataOperationSuccess) {
+                                      ScaffoldMessenger.of(listennerContext)
+                                          .showSnackBar(SnackBar(content: Text(state.message)));
                                       BlocProvider.of<DataBloc>(listennerContext).add(LoadCategories());
-                                    });
-                                  } else if (state is DataOperationSuccess) {
-                                    ScaffoldMessenger.of(listennerContext)
-                                        .showSnackBar(SnackBar(content: Text(state.message)));
-                                  }
-                                },
-                                builder: (builderContext, state) {
-                                  if (state is CategoriesLoaded) {
-                                    return HomePageComp(
-                                      builderContext: builderContext,
-                                      theme: primary,
-                                      username: username,
-                                      state: state,
-                                      dataBloc: dataBloc,
-                                      buttonNewSomething: addNewSomething('New Category', () {}, state),
-                                      isLoading: state is DataLoading,
-                                    );
-                                  } else if (state is SubcategoriesLoaded) {
-                                    return HomePageComp(
-                                      builderContext: builderContext,
-                                      theme: primary,
-                                      username: username,
-                                      state: state,
-                                      dataBloc: dataBloc,
-                                      buttonNewSomething: addNewSomething('New Subcategory', () {}, state),
-                                      isLoading: state is DataLoading,
-                                    );
-                                  } else if (state is EntriesLoaded) {
-                                    return HomePageComp(
-                                      builderContext: builderContext,
-                                      theme: primary,
-                                      username: username,
-                                      state: state,
-                                      dataBloc: dataBloc,
-                                      buttonNewSomething: addNewSomething('', () {}, state),
-                                      isLoading: state is DataLoading,
-                                    );
-                                  } else if (state is DataLoading) {
-                                    return const Center(child: CircularProgressIndicator());
-                                  } else {
-                                    return const Center(child: Text('Unknown state'));
-                                  }
-                                },
-                              ),
-                            ],
-                          )),
-                    ],
-                  ))),
-          CustomNavBar(
-            context: context,
-            buttonColor: primary[10]!,
-            onPressed: () {
-              addEntry(context);
-            },
-            homeFunction: () {},
-            historyFunction: () {},
-            chartFunction: () {},
-            profileFunction: () {},
-          )
-        ],
+                                    }
+                                  },
+                                  builder: (builderContext, state) {
+                                    print(state);
+                                    if (state is CategoriesLoaded) {
+                                      return HomePageComp(
+                                        builderContext: builderContext,
+                                        theme: primary,
+                                        username: username,
+                                        state: state,
+                                        dataBloc: BlocProvider.of<DataBloc>(builderContext),
+                                        buttonNewSomething: addNewSomething('New Category', () {}, state),
+                                        isLoading: state is DataLoading,
+                                      );
+                                    } else if (state is SubcategoriesLoaded) {
+                                      return HomePageComp(
+                                        builderContext: builderContext,
+                                        theme: primary,
+                                        username: username,
+                                        state: state,
+                                        dataBloc: BlocProvider.of<DataBloc>(builderContext),
+                                        buttonNewSomething: addNewSomething('New Subcategory', () {}, state),
+                                        isLoading: state is DataLoading,
+                                      );
+                                    } else if (state is EntriesLoaded) {
+                                      return HomePageComp(
+                                        builderContext: builderContext,
+                                        theme: primary,
+                                        username: username,
+                                        state: state,
+                                        dataBloc: BlocProvider.of<DataBloc>(builderContext),
+                                        buttonNewSomething: addNewSomething('', () {}, state),
+                                        isLoading: state is DataLoading,
+                                      );
+                                    } else if (state is DataLoading) {
+                                      return const Center(child: CircularProgressIndicator());
+                                    } else {
+                                      return const Center(child: Text('Unknown state'));
+                                    }
+                                  },
+                                ),
+                              ],
+                            )),
+                      ],
+                    ))),
+            BlocBuilder<DataBloc, DataState>(
+              builder: (context, state) {
+                return CustomNavBar(
+                  context: context,
+                  buttonColor: primary[10]!,
+                  onPressed: () {
+                    if (state is SubcategoriesLoaded) {
+                      addEntry(context, state.category, '');
+                    } else if (state is EntriesLoaded) {
+                      addEntry(context, state.category, state.subcategory);
+                    }
+                    addEntry(context, '', '');
+                  },
+                  homeFunction: () {},
+                  historyFunction: () {},
+                  chartFunction: () {},
+                  profileFunction: () {},
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }

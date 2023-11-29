@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:trackerapp/bloc/data_bloc.dart';
+import 'package:trackerapp/bloc/data/data_bloc.dart';
 import 'package:trackerapp/components/back_button.dart';
 import 'package:trackerapp/components/data_list.dart';
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PasswordField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
-  final Function onChanged;
+  final ValueChanged<String> onChanged;
 
   const PasswordField({
     Key? key,
@@ -53,7 +53,7 @@ class PasswordFieldState extends State<PasswordField> {
             ),
           ),
         ),
-        onChanged: widget.onChanged(),
+        onChanged: widget.onChanged,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:trackerapp/components/my_button.dart';
 import 'package:trackerapp/components/my_textfield.dart';
 import 'package:trackerapp/components/passwordfield.dart';
@@ -6,6 +7,8 @@ import 'package:trackerapp/components/squared_tile.dart';
 import 'package:trackerapp/components/login/login_image_container.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trackerapp/cubit/login/login_cubit.dart';
+import 'package:trackerapp/pages/forgot_password.dart';
+import 'package:trackerapp/pages/signup_screen.dart';
 import 'package:trackerapp/repositories/auth_repository.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -79,12 +82,13 @@ class LoginScreenState extends State<LoginScreen> {
                                     buildWhen: (previous, current) => previous.email != current.email,
                                     builder: (context, state) {
                                       return MyTextField(
-                                          controller: emailController,
-                                          hintText: 'Email',
-                                          obscureText: false,
-                                          onChanged: (email) {
-                                            context.read<LoginCubit>().emailChanged(email);
-                                          });
+                                        controller: emailController,
+                                        hintText: 'Email',
+                                        obscureText: false,
+                                        onChanged: (email) {
+                                          context.read<LoginCubit>().emailChanged(email);
+                                        },
+                                      );
                                     },
                                   ),
 
@@ -117,7 +121,10 @@ class LoginScreenState extends State<LoginScreen> {
                                           ],
                                         )),
                                     onTap: () {
-                                      Navigator.pushNamed(context, '/forgotpassword');
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => const ForgotPasswordScreen()));
                                     }),
 
                                 //sign in
@@ -128,8 +135,15 @@ class LoginScreenState extends State<LoginScreen> {
                                         ? const Center(child: CircularProgressIndicator())
                                         : MyButton(
                                             text: 'Login',
-                                            onPressed: () =>
-                                                context.read<LoginCubit>().loginWithCredentials(),
+                                            onPressed: () {
+                                              if (emailController.text == '') {
+                                                Fluttertoast.showToast(msg: 'Please insert an email');
+                                              } else if (passwordController.text == '') {
+                                                Fluttertoast.showToast(msg: "Password can't be empty");
+                                              } else {
+                                                context.read<LoginCubit>().loginWithCredentials();
+                                              }
+                                            },
                                             color: const Color.fromRGBO(37, 42, 48, 1),
                                           );
                                   },
@@ -177,7 +191,8 @@ class LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(width: 4),
                                     GestureDetector(
                                         onTap: () {
-                                          Navigator.pushNamed(context, '/signup');
+                                          Navigator.push(context,
+                                              MaterialPageRoute(builder: (context) => const SignupScreen()));
                                         },
                                         child: Text('Create one now!',
                                             style: TextStyle(

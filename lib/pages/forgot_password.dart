@@ -11,6 +11,9 @@ class ForgotPasswordScreen extends StatefulWidget {
 
   @override
   ForgotPasswordScreenState createState() => ForgotPasswordScreenState();
+
+  static Page page() => const MaterialPage<void>(child: ForgotPasswordScreen());
+  
 }
 
 class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
@@ -68,7 +71,7 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       controller: emailController,
                       hintText: 'Email',
                       obscureText: false,
-                      onChanged: () {},
+                      onChanged: (_) {},
                     ),
                     const SizedBox(height: 20),
                     Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [

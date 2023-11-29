@@ -18,18 +18,27 @@ class AuthRepository {
     });
   }
 
-  Future<void> signup({required String email, required String password, required String username}) async {
+  Future<bool> signup({required String email, required String password, required String username}) async {
     try {
       firebase_auth.UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       await userCredential.user!.updateDisplayName(username);
-    } catch (_) {}
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
   }
 
-  Future<void> loginWithEmailAndPassword({required String email, required String password}) async {
+  Future<bool> loginWithEmailAndPassword({required String email, required String password}) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-    } catch (_) {}
+
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
   }
 
   Future<void> logout() async {
@@ -41,6 +50,6 @@ class AuthRepository {
 
 extension on firebase_auth.User {
   User get toUser {
-    return User(id: uid, email: email, username: displayName, photoUrl: photoURL);
+    return User(id: uid, email: email, username: displayName, photo: photoURL);
   }
 }

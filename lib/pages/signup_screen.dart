@@ -27,7 +27,9 @@ class SignupScreenState extends State<SignupScreen> {
   final confirmPasswordController = TextEditingController();
 
   void registerUser(BuildContext context) {
-    if (confirmPasswordController.text != passwordController.text) {
+    if (passwordController.text == '') {
+      Fluttertoast.showToast(msg: "Password can't be empty");
+    } else if (confirmPasswordController.text != passwordController.text) {
       Fluttertoast.showToast(msg: "Passwords do not match");
     } else {
       context.read<SignupCubit>().signupWithCredentials();
@@ -44,8 +46,8 @@ class SignupScreenState extends State<SignupScreen> {
               controller: usernameController,
               hintText: 'Username',
               obscureText: false,
-              onChanged: (password) {
-                context.read<SignupCubit>().usernameChanged(password);
+              onChanged: (username) {
+                context.read<SignupCubit>().usernameChanged(username);
               },
             );
           },
@@ -61,7 +63,7 @@ class SignupScreenState extends State<SignupScreen> {
               hintText: 'Email',
               obscureText: false,
               onChanged: (email) {
-                context.read<SignupCubit>().usernameChanged(email);
+                context.read<SignupCubit>().emailChanged(email);
               },
             );
           },
@@ -88,7 +90,7 @@ class SignupScreenState extends State<SignupScreen> {
         PasswordField(
           controller: confirmPasswordController,
           hintText: 'Confirm Password',
-          onChanged: () {},
+          onChanged: (_) {},
         ),
       ],
     );
@@ -141,7 +143,7 @@ class SignupScreenState extends State<SignupScreen> {
                                   return state.status == SignupStatus.submitting
                                       ? const Center(child: CircularProgressIndicator())
                                       : MyButton(
-                                          text: 'Signup',
+                                          text: 'Sign Up',
                                           onPressed: () => registerUser(context),
                                           color: const Color.fromRGBO(37, 42, 48, 1),
                                         );

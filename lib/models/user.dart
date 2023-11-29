@@ -4,9 +4,9 @@ class User extends Equatable{
   final String id;
   final String? email;
   final String? username;
-  final String? photoUrl;
+  final String? photo;
 
-  const User({required this.id, this.email, this.username, this.photoUrl});
+  const User({required this.id, this.email, this.username, this.photo});
 
   static const empty = User(id: '');
 
@@ -14,5 +14,5 @@ class User extends Equatable{
   bool get isNotEmpty => this != User.empty;
 
   @override
-  List<Object?> get props => [id, email, username, photoUrl];
+  List<Object?> get props => [id, email, username, photo];
 }

@@ -8,7 +8,7 @@ import 'package:trackerapp/repositories/auth_repository.dart';
 import 'package:trackerapp/router/app_router.dart';
 import 'firebase_options.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -20,7 +20,6 @@ Future<void> main() async {
 }
 
 class App extends StatelessWidget {
-  // final AppRouter appRouter;
   final AuthRepository _authRepository;
   const App({Key? key, required AuthRepository authRepository})
       : _authRepository = authRepository,

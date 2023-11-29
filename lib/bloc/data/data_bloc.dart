@@ -14,7 +14,6 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   DataBloc(this.firestoreService) : super(DataInitial()) {
     on<LoadCategories>(((event, emit) async {
       try {
-        emit(DataLoading());
         final data = await firestoreService.getCategories().first;
         emit(CategoriesLoaded(categories: data));
       } catch (e) {
@@ -24,7 +23,6 @@ class DataBloc extends Bloc<DataEvent, DataState> {
 
     on<LoadSubcategories>(((event, emit) async {
       try {
-        emit(DataLoading());
         final data = await firestoreService.getSubcategories(event.categoryId).first;
         emit(
             SubcategoriesLoaded(subcategories: data, category: event.category, categoryId: event.categoryId));
@@ -104,5 +102,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
         emit(DataError(message: e.toString()));
       }
     });
+
+    add(LoadCategories());
   }
 }

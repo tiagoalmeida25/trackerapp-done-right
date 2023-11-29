@@ -6,9 +6,39 @@ class EntryContainer extends StatelessWidget {
   final Function() onTap;
   final String word;
   final int index;
+  final DateTime? date;
 
-  const EntryContainer({Key? key, required this.onTap, required this.word, required this.index})
+  const EntryContainer({Key? key, required this.onTap, required this.word, required this.index, this.date})
       : super(key: key);
+
+  String getMonth(int month) {
+    switch (month) {
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Apr';
+      case 5:
+        return 'May';
+      case 6:
+        return 'Jun';
+      case 7:
+        return 'Jul';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      default:
+        return 'Dec';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +51,22 @@ class EntryContainer extends StatelessWidget {
     textPainter.layout();
     double wordWidth = textPainter.width;
     double wordHeight = textPainter.height;
+
+    String dateStr = '';
+    if (date != null) {
+      int minute = date!.minute;
+      String minStr = '';
+      if (minute < 10) {
+        minStr = '0$minute';
+      } else {
+        minStr = minute.toString();
+      }
+
+      String year =  date!.year.toString();
+      year = year.substring(2, 4);
+
+      dateStr = '${date!.day} ${getMonth(date!.month)} $year ${date!.hour}:$minStr';
+    }
 
     return GestureDetector(
       onTap: onTap,
@@ -60,6 +106,24 @@ class EntryContainer extends StatelessWidget {
               ),
             ),
           ),
+          if (date != null)
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10, left: 24, right: 14, top: 14),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(32),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    color: Colors.black.withOpacity(0.3),
+                    child: Text(
+                      dateStr,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

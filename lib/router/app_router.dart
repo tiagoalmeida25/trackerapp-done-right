@@ -14,22 +14,3 @@ List<Page> onGenerateAppViewPages(AppStatus state, List<Page<dynamic>> pages) {
       return [LoginScreen.page()];
   }
 }
-
-// class AppRouter {
-//   Route? onGenerateRoute(RouteSettings settings) {
-//     switch (settings.name) {
-//       case '/auth':
-//         return MaterialPageRoute(builder: (_) => const AuthPage());
-//       case '/login':
-//         return MaterialPageRoute(builder: (_) => const LoginScreen());
-//       case '/signup':
-//         return MaterialPageRoute(builder: (_) => const SignupScreen());
-//       case '/forgotpassword':
-//         return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
-//       case '/home':
-//         return MaterialPageRoute(builder: (_) => const HomeScreen(username: ''));
-//       default:
-//         return null;
-//     }
-//   }
-// }
