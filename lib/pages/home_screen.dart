@@ -21,18 +21,31 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+final List<String> paletteNames = [
+  "primary",
+  "paletteblue",
+  "palettepurple",
+  "palettegreen",
+  "paletterainbow",
+  "palettepink",
+  "palettered",
+  "paletteredtoyellow",
+];
+
+Map<String, MaterialColor> paletteMap = {
+  "primary": primary,
+  "palettegreen": palettegreen,
+  "paletteblue": paletteblue,
+  "palettepurple": palettepurple,
+  "paletterainbow": paletterainbow,
+  "palettepink": palettepink,
+  "palettered": palettered,
+  "paletteredtoyellow": paletteredtoyellow,
+};
+
 class _HomeScreenState extends State<HomeScreen> {
-  // String selectedPalette = "";
-  // final List<String> paletteNames = [
-  //   "primary",
-  //   "paletteblue",
-  //   "palettepurple",
-  //   "palettegreen",
-  //   "paletterainbow",
-  //   "palettepink",
-  //   "palettered",
-  //   "paletteredtoyellow",
-  // ];
+  MaterialColor selectedPalette = primary;
+  String selectedPaletteName = "primary";
 
   String username = "";
   @override
@@ -141,11 +154,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancel', style: TextStyle(color: primary[10])),
+                  child: Text('Cancel', style: TextStyle(color: selectedPalette[10])),
                 ),
                 ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(primary[10]),
+                    backgroundColor: MaterialStateProperty.all(selectedPalette[10]),
                     textStyle:
                         MaterialStateProperty.all(const TextStyle(color: Color.fromARGB(186, 186, 186, 1))),
                   ),
@@ -253,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             )),
                                         Text(username,
                                             style: TextStyle(
-                                              color: primary[10],
+                                              color: selectedPalette[10],
                                               fontSize: 36,
                                               fontWeight: FontWeight.bold,
                                             )),
@@ -350,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     if (state is CategoriesLoaded) {
                                       return HomePageComp(
                                         builderContext: builderContext,
-                                        theme: primary,
+                                        theme: selectedPalette,
                                         username: username,
                                         state: state,
                                         dataBloc: BlocProvider.of<DataBloc>(builderContext),
@@ -360,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     } else if (state is SubcategoriesLoaded) {
                                       return HomePageComp(
                                         builderContext: builderContext,
-                                        theme: primary,
+                                        theme: selectedPalette,
                                         username: username,
                                         state: state,
                                         dataBloc: BlocProvider.of<DataBloc>(builderContext),
@@ -370,7 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     } else if (state is EntriesLoaded) {
                                       return HomePageComp(
                                         builderContext: builderContext,
-                                        theme: primary,
+                                        theme: selectedPalette,
                                         username: username,
                                         state: state,
                                         dataBloc: BlocProvider.of<DataBloc>(builderContext),
@@ -392,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, state) {
                 return CustomNavBar(
                   context: context,
-                  buttonColor: primary[10]!,
+                  buttonColor: selectedPalette[10]!,
                   onPressed: () {
                     if (state is SubcategoriesLoaded) {
                       addEntry(context, state.category, '');
@@ -404,7 +417,50 @@ class _HomeScreenState extends State<HomeScreen> {
                   homeFunction: () {},
                   historyFunction: () {},
                   chartFunction: () {},
-                  profileFunction: () {},
+                  profileFunction: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Choose selectedPalette'),
+                        content: DropdownButton(
+                          items: paletteNames.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          value: selectedPaletteName,
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedPalette = paletteMap[value!]!;
+                              selectedPaletteName = value;
+                              
+                            });
+                          },
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Cancel', style: TextStyle(color: selectedPalette[10])),
+                          ),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(selectedPalette[10]),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text(
+                              'Save',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             )

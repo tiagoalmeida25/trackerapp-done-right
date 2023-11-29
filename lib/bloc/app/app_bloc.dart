@@ -31,7 +31,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     AppUserChanged event,
     Emitter<AppState> emit,
   ) {
-    print('user: ${event.user}');
     emit(event.user.isNotEmpty ? AppState.authenticated(event.user) : const AppState.unauthenticated());
   }
 

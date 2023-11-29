@@ -53,7 +53,7 @@ class HomePageComp extends StatelessWidget {
                       child: Text('No categories yet...'),
                     ))
               else
-                DataList(builderContext: builderContext, state: state, dataBloc: dataBloc),
+                DataList(builderContext: builderContext, theme: theme, state: state, dataBloc: dataBloc),
             if (state is SubcategoriesLoaded)
               if (state.subcategories.isEmpty)
                 const SizedBox(
@@ -62,7 +62,7 @@ class HomePageComp extends StatelessWidget {
                       child: Text('No subcategories yet...'),
                     ))
               else
-                DataList(builderContext: builderContext, state: state, dataBloc: dataBloc),
+                DataList(builderContext: builderContext, theme: theme, state: state, dataBloc: dataBloc),
             if (state is EntriesLoaded)
               if (state.entries.isEmpty)
                 const SizedBox(
@@ -71,7 +71,7 @@ class HomePageComp extends StatelessWidget {
                       child: Text('No entries yet...'),
                     ))
               else
-                DataList(builderContext: builderContext, state: state, dataBloc: dataBloc),
+                DataList(builderContext: builderContext, theme: theme, state: state, dataBloc: dataBloc),
           ],
         ),
         if (isLoading) const Center(child: CircularProgressIndicator())

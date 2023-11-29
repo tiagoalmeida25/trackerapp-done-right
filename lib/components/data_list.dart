@@ -6,8 +6,14 @@ class DataList extends StatelessWidget {
   final BuildContext builderContext;
   final dynamic state;
   final dynamic dataBloc;
+  final MaterialColor theme;
 
-  const DataList({Key? key, required this.builderContext, required this.state, required this.dataBloc})
+  const DataList(
+      {Key? key,
+      required this.theme,
+      required this.builderContext,
+      required this.state,
+      required this.dataBloc})
       : super(key: key);
 
   @override
@@ -27,6 +33,7 @@ class DataList extends StatelessWidget {
         itemBuilder: (BuildContext builderContext, int index) {
           if (state is CategoriesLoaded) {
             return EntryContainer(
+              theme: theme,
               onTap: () => dataBloc.add(LoadSubcategories(
                   categoryId: state.categories[index].categoryId,
                   category: state.categories[index].category)),
@@ -35,6 +42,7 @@ class DataList extends StatelessWidget {
             );
           } else if (state is SubcategoriesLoaded) {
             return EntryContainer(
+                theme: theme,
                 onTap: () => dataBloc.add(LoadEntries(
                       category: state.category,
                       categoryId: state.categoryId,
@@ -45,11 +53,11 @@ class DataList extends StatelessWidget {
                 index: index);
           } else if (state is EntriesLoaded) {
             return EntryContainer(
-              onTap: () {},
-              word: state.entries[index].value,
-              index: index,
-              date: state.entries[index].date
-            );
+                theme: theme,
+                onTap: () {},
+                word: state.entries[index].value,
+                index: index,
+                date: state.entries[index].date);
           }
           return null;
         },

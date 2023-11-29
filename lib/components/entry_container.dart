@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart' hide BoxDecoration, BoxShadow;
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
-import 'package:trackerapp/app_colors.dart';
 
 class EntryContainer extends StatelessWidget {
   final Function() onTap;
   final String word;
   final int index;
   final DateTime? date;
+  final MaterialColor theme;
 
-  const EntryContainer({Key? key, required this.onTap, required this.word, required this.index, this.date})
-      : super(key: key);
+  const EntryContainer({
+    Key? key,
+    required this.theme,
+    required this.onTap,
+    required this.word,
+    required this.index,
+    this.date,
+  }) : super(key: key);
 
   String getMonth(int month) {
     switch (month) {
@@ -62,7 +68,7 @@ class EntryContainer extends StatelessWidget {
         minStr = minute.toString();
       }
 
-      String year =  date!.year.toString();
+      String year = date!.year.toString();
       year = year.substring(2, 4);
 
       dateStr = '${date!.day} ${getMonth(date!.month)} $year ${date!.hour}:$minStr';
@@ -77,7 +83,7 @@ class EntryContainer extends StatelessWidget {
             child: Container(
               height: wordHeight + 36,
               decoration: BoxDecoration(
-                color: primary[index + 1],
+                color: theme[index + 1],
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(

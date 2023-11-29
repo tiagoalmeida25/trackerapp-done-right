@@ -1,7 +1,7 @@
 part of 'data_bloc.dart';
 
 @immutable
-class DataEvent {}
+abstract class DataEvent {}
 
 class LoadUserEvent extends DataEvent {}
 

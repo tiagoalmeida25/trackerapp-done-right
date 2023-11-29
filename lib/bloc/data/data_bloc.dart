@@ -14,6 +14,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   DataBloc(this.firestoreService) : super(DataInitial()) {
     on<LoadCategories>(((event, emit) async {
       try {
+        emit(DataLoading());
         final data = await firestoreService.getCategories().first;
         emit(CategoriesLoaded(categories: data));
       } catch (e) {
