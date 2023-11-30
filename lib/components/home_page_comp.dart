@@ -42,6 +42,9 @@ class HomePageComp extends StatelessWidget {
                           .add(LoadSubcategories(categoryId: state.categoryId, category: state.category)),
                       state: state,
                       dataBloc: dataBloc),
+                if (state is AllEntriesLoaded)
+                  CustomBackButton(
+                      onTap: () => dataBloc.add(LoadCategories()), state: state, dataBloc: dataBloc),
                 buttonNewSomething,
               ],
             ),
@@ -64,6 +67,15 @@ class HomePageComp extends StatelessWidget {
               else
                 DataList(builderContext: builderContext, theme: theme, state: state, dataBloc: dataBloc),
             if (state is EntriesLoaded)
+              if (state.entries.isEmpty)
+                const SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: Text('No entries yet...'),
+                    ))
+              else
+                DataList(builderContext: builderContext, theme: theme, state: state, dataBloc: dataBloc),
+            if (state is AllEntriesLoaded)
               if (state.entries.isEmpty)
                 const SizedBox(
                     height: 200,

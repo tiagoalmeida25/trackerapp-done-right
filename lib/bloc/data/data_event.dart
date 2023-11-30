@@ -5,6 +5,19 @@ abstract class DataEvent {}
 
 class LoadUserEvent extends DataEvent {}
 
+class CreateCategory extends DataEvent {
+  final String name;
+
+  CreateCategory({required this.name});
+}
+
+class CreateSubcategory extends DataEvent {
+  final String categoryId;
+  final String name;
+
+  CreateSubcategory({required this.categoryId, required this.name});
+}
+
 class CreateEntry extends DataEvent {
   final String id;
   final String category;
@@ -89,3 +102,5 @@ class LoadEntries extends DataEvent {
       required this.subcategory,
       required this.subcategoryId});
 }
+
+class LoadAllEntries extends DataEvent {}

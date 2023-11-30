@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:trackerapp/bloc/data/data_bloc.dart';
 import 'package:trackerapp/components/entry_container.dart';
 
-class DataList extends StatelessWidget {
+class DataList extends StatefulWidget {
   final BuildContext builderContext;
   final dynamic state;
   final dynamic dataBloc;
@@ -15,6 +15,34 @@ class DataList extends StatelessWidget {
       required this.state,
       required this.dataBloc})
       : super(key: key);
+
+  @override
+  State<DataList> createState() => _DataListState();
+}
+
+class _DataListState extends State<DataList> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    )..forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant DataList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _animationController.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void deletePopup(BuildContext context, dynamic dataBloc, dynamic state, MaterialColor theme, int index) {
     String text = '';
@@ -60,48 +88,117 @@ class DataList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int length = 0;
-    if (state is CategoriesLoaded) {
-      length = state.categories.length;
-    } else if (state is SubcategoriesLoaded) {
-      length = state.subcategories.length;
-    } else if (state is EntriesLoaded) {
-      length = state.entries.length;
+    if (widget.state is CategoriesLoaded) {
+      length = widget.state.categories.length;
+    } else if (widget.state is SubcategoriesLoaded) {
+      length = widget.state.subcategories.length;
+    } else if (widget.state is EntriesLoaded) {
+      length = widget.state.entries.length;
+    } else if (widget.state is AllEntriesLoaded) {
+      length = widget.state.entries.length;
     }
+  
+    double height = MediaQuery.of(widget.builderContext).size.height - 310;
+
+    if (widget.state is AllEntriesLoaded) {
+      height = MediaQuery.of(widget.builderContext).size.height - 310;
+    }
+
     return SizedBox(
-      height: MediaQuery.of(builderContext).size.height - 310,
+      height: height,
       child: ListView.builder(
         itemCount: length,
         itemBuilder: (BuildContext builderContext, int index) {
-          if (state is CategoriesLoaded) {
-            return EntryContainer(
-              theme: theme,
-              onTap: () => dataBloc.add(LoadSubcategories(
-                  categoryId: state.categories[index].categoryId,
-                  category: state.categories[index].category)),
-              onLongPress: () => deletePopup(context, dataBloc, state, theme, index),
-              word: state.categories[index].category,
-              index: index,
-            );
-          } else if (state is SubcategoriesLoaded) {
-            return EntryContainer(
-                theme: theme,
-                onTap: () => dataBloc.add(LoadEntries(
-                      category: state.category,
-                      categoryId: state.categoryId,
-                      subcategory: state.subcategories[index].subcategory,
-                      subcategoryId: state.subcategories[index].subcategoryId,
-                    )),
-                onLongPress: () => deletePopup(context, dataBloc, state, theme, index),
-                word: state.subcategories[index].subcategory,
-                index: index);
-          } else if (state is EntriesLoaded) {
-            return EntryContainer(
-                theme: theme,
-                onTap: () {},
-                onLongPress: () => deletePopup(context, dataBloc, state, theme, index),
-                word: state.entries[index].value,
-                index: index,
-                date: state.entries[index].date);
+          if (widget.state is CategoriesLoaded) {
+            return SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 10), end: Offset.zero).animate(
+                  CurvedAnimation(
+                    parent: _animationController,
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+                child: EntryContainer(
+                  theme: widget.theme,
+                  onTap: () => widget.dataBloc.add(LoadSubcategories(
+                      categoryId: widget.state.categories[index].categoryId,
+                      category: widget.state.categories[index].category)),
+                  onLongPress: () => deletePopup(
+                    context,
+                    widget.dataBloc,
+                    widget.state,
+                    widget.theme,
+                    index,
+                  ),
+                  word: widget.state.categories[index].category,
+                  index: index,
+                ));
+          } else if (widget.state is SubcategoriesLoaded) {
+            return SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 10), end: Offset.zero).animate(
+                  CurvedAnimation(
+                    parent: _animationController,
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+                child: EntryContainer(
+                    theme: widget.theme,
+                    onTap: () => widget.dataBloc.add(LoadEntries(
+                          category: widget.state.category,
+                          categoryId: widget.state.categoryId,
+                          subcategory: widget.state.subcategories[index].subcategory,
+                          subcategoryId: widget.state.subcategories[index].subcategoryId,
+                        )),
+                    onLongPress: () => deletePopup(
+                          context,
+                          widget.dataBloc,
+                          widget.state,
+                          widget.theme,
+                          index,
+                        ),
+                    word: widget.state.subcategories[index].subcategory,
+                    index: index));
+          } else if (widget.state is EntriesLoaded) {
+            return SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 10), end: Offset.zero).animate(
+                  CurvedAnimation(
+                    parent: _animationController,
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+                child: EntryContainer(
+                    theme: widget.theme,
+                    onTap: () {},
+                    onLongPress: () => deletePopup(
+                          context,
+                          widget.dataBloc,
+                          widget.state,
+                          widget.theme,
+                          index,
+                        ),
+                    word: widget.state.entries[index].value,
+                    index: index,
+                    date: widget.state.entries[index].date));
+          } else if (widget.state is AllEntriesLoaded) {
+            return SlideTransition(
+                position: Tween<Offset>(begin: const Offset(0, 10), end: Offset.zero).animate(
+                  CurvedAnimation(
+                    parent: _animationController,
+                    curve: Curves.easeInOut,
+                  ),
+                ),
+                child: EntryContainer(
+                    theme: widget.theme,
+                    onTap: () {},
+                    onLongPress: () => deletePopup(
+                          context,
+                          widget.dataBloc,
+                          widget.state,
+                          widget.theme,
+                          index,
+                        ),
+                    word: widget.state.entries[index].value,
+                    index: index,
+                    date: widget.state.entries[index].date));
           }
           return null;
         },

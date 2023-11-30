@@ -36,6 +36,12 @@ class EntriesLoaded extends DataState {
       required this.subcategoryId});
 }
 
+class AllEntriesLoaded extends DataState {
+  final List<Entry> entries;
+
+  AllEntriesLoaded({required this.entries});
+}
+
 class DataError extends DataState {
   final String message;
 

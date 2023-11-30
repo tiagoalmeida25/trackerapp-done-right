@@ -14,7 +14,6 @@ class DataBloc extends Bloc<DataEvent, DataState> {
   DataBloc(this.firestoreService) : super(DataInitial()) {
     on<LoadCategories>(((event, emit) async {
       try {
-        emit(DataLoading());
         final data = await firestoreService.getCategories().first;
         emit(CategoriesLoaded(categories: data));
       } catch (e) {
@@ -46,6 +45,26 @@ class DataBloc extends Bloc<DataEvent, DataState> {
         emit(DataError(message: e.toString()));
       }
     }));
+
+    on<CreateCategory>((event, emit) {
+      try {
+        emit(DataLoading());
+        firestoreService.createCategory(event.name, DateTime.now());
+        emit(DataOperationSuccess(message: 'Category added', previousState: state));
+      } catch (e) {
+        emit(DataError(message: e.toString()));
+      }
+    });
+
+    on<CreateSubcategory>((event, emit) {
+      try {
+        emit(DataLoading());
+        firestoreService.createSubcategory(event.name, event.categoryId, DateTime.now());
+        emit(DataOperationSuccess(message: 'Subcategory added', previousState: state));
+      } catch (e) {
+        emit(DataError(message: e.toString()));
+      }
+    });
 
     // when entering all fields
     on<CreateEntry>((event, emit) async {
@@ -119,6 +138,15 @@ class DataBloc extends Bloc<DataEvent, DataState> {
           event.date,
         );
         emit(DataOperationSuccess(message: 'Entry updated', previousState: state));
+      } catch (e) {
+        emit(DataError(message: e.toString()));
+      }
+    });
+
+    on<LoadAllEntries>((event, emit) async {
+      try {
+        final data = await firestoreService.getAllEntries().first;
+        emit(AllEntriesLoaded(entries: data));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }

@@ -53,6 +53,78 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+  void addCategory(BuildContext oldContext, String from, dynamic state) {
+    final TextEditingController categoryController = TextEditingController();
+
+    String title = '';
+    String label = '';
+
+    if (from == 'category') {
+      title = 'Add Category';
+      label = 'Category';
+    } else if (from == 'subcategory') {
+      title = 'Add Subcategory';
+      label = 'Subcategory';
+    }
+
+    showDialog(
+      context: oldContext,
+      builder: ((context) => AlertDialog(
+              backgroundColor: const Color.fromRGBO(37, 42, 48, 1),
+              title: Text(title, style: const TextStyle(color: Colors.white)),
+              content: SizedBox(
+                  child: TextField(
+                controller: categoryController,
+                decoration: InputDecoration(
+                  label: Text(
+                    label,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+                cursorColor: Colors.white,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+              )),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel', style: TextStyle(color: selectedPalette[10])),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(selectedPalette[10]),
+                    textStyle:
+                        MaterialStateProperty.all(const TextStyle(color: Color.fromARGB(186, 186, 186, 1))),
+                  ),
+                  onPressed: () {
+                    if (from == 'category') {
+                      BlocProvider.of<DataBloc>(oldContext).add(
+                        CreateCategory(
+                          name: categoryController.text,
+                        ),
+                      );
+                    } else if (from == 'subcategory') {
+                      BlocProvider.of<DataBloc>(oldContext).add(
+                        CreateSubcategory(
+                          name: categoryController.text,
+                          categoryId: state.categoryId,
+                        ),
+                      );
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Add',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                )
+              ])),
+    );
+  }
+
   void addEntry(BuildContext oldContext, String? category, String? subcategory) {
     final TextEditingController categoryController = TextEditingController();
     final TextEditingController subcategoryController = TextEditingController();
@@ -187,21 +259,24 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<AppBloc>().add(AppLogoutRequested());
   }
 
-  Widget addNewSomething(String text, Function() onTap, dynamic state) {
-    return Container(
-      height: 35,
-      width: state is SubcategoriesLoaded ? 175 : 150,
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
-      decoration: BoxDecoration(
-          color: state is EntriesLoaded ? Colors.transparent : const Color.fromRGBO(37, 42, 48, 1),
-          borderRadius: BorderRadius.circular(32)),
-      child: Row(
-        children: [
-          state is! EntriesLoaded
-              ? const Icon(Icons.add, color: Color.fromRGBO(186, 186, 186, 1), size: 24)
-              : const SizedBox(),
-          Text(text, style: const TextStyle(color: Color.fromRGBO(186, 186, 186, 1), fontSize: 16)),
-        ],
+  Widget addNewSomething(String text, Function()? onTap, dynamic state) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 35,
+        width: state is SubcategoriesLoaded ? 175 : 150,
+        padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+        decoration: BoxDecoration(
+            color: onTap == null ? Colors.transparent : const Color.fromRGBO(37, 42, 48, 1),
+            borderRadius: BorderRadius.circular(32)),
+        child: Row(
+          children: [
+            onTap != null
+                ? const Icon(Icons.add, color: Color.fromRGBO(186, 186, 186, 1), size: 24)
+                : const SizedBox(),
+            Text(text, style: const TextStyle(color: Color.fromRGBO(186, 186, 186, 1), fontSize: 16)),
+          ],
+        ),
       ),
     );
   }
@@ -255,29 +330,81 @@ class _HomeScreenState extends State<HomeScreen> {
                                     height: 110,
                                     padding: const EdgeInsets.only(left: 20, top: 35),
                                     color: const Color.fromRGBO(37, 42, 48, 1),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        const Text('Welcome, ',
-                                            style: TextStyle(
+                                    child: BlocBuilder<DataBloc, DataState>(builder: (context, state) {
+                                      if (state is SubcategoriesLoaded) {
+                                        return Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(state.category,
+                                                style: TextStyle(
+                                                  color: selectedPalette[10],
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                          ],
+                                        );
+                                      } else if (state is EntriesLoaded) {
+                                        return Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(state.category,
+                                                style: TextStyle(
+                                                  color: selectedPalette[10],
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                            const SizedBox(width: 8),
+                                            const Icon(
+                                              Icons.arrow_forward_ios_rounded,
                                               color: Colors.white,
-                                              fontSize: 36,
-                                              fontWeight: FontWeight.bold,
-                                            )),
-                                        Text(username,
-                                            style: TextStyle(
-                                              color: selectedPalette[10],
-                                              fontSize: 36,
-                                              fontWeight: FontWeight.bold,
-                                            )),
-                                        const Text('!',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 36,
-                                              fontWeight: FontWeight.bold,
-                                            ))
-                                      ],
-                                    )))),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(state.subcategory,
+                                                style: TextStyle(
+                                                  color: selectedPalette[10],
+                                                  fontSize: 26,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                          ],
+                                        );
+                                      } else if (state is AllEntriesLoaded) {
+                                        return Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text('All Entries',
+                                                style: TextStyle(
+                                                  color: selectedPalette[10],
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                          ],
+                                        );
+                                      } else {
+                                        return Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            const Text('Welcome, ',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                            Text(username,
+                                                style: TextStyle(
+                                                  color: selectedPalette[10],
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                            const Text('!',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 36,
+                                                  fontWeight: FontWeight.bold,
+                                                ))
+                                          ],
+                                        );
+                                      }
+                                    })))),
                         Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             child: Column(
@@ -382,7 +509,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         username: username,
                                         state: state,
                                         dataBloc: BlocProvider.of<DataBloc>(builderContext),
-                                        buttonNewSomething: addNewSomething('New Category', () {}, state),
+                                        buttonNewSomething: addNewSomething('New Category', () {
+                                          addCategory(builderContext, 'category', state);
+                                        }, state),
                                         isLoading: state is DataLoading,
                                       );
                                     } else if (state is SubcategoriesLoaded) {
@@ -392,7 +521,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         username: username,
                                         state: state,
                                         dataBloc: BlocProvider.of<DataBloc>(builderContext),
-                                        buttonNewSomething: addNewSomething('New Subcategory', () {}, state),
+                                        buttonNewSomething: addNewSomething('New Subcategory', () {
+                                          addCategory(builderContext, 'subcategory', state);
+                                        }, state),
                                         isLoading: state is DataLoading,
                                       );
                                     } else if (state is EntriesLoaded) {
@@ -402,7 +533,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         username: username,
                                         state: state,
                                         dataBloc: BlocProvider.of<DataBloc>(builderContext),
-                                        buttonNewSomething: addNewSomething('', () {}, state),
+                                        buttonNewSomething: addNewSomething('', null, state),
+                                        isLoading: state is DataLoading,
+                                      );
+                                    } else if (state is AllEntriesLoaded) {
+                                      return HomePageComp(
+                                        builderContext: builderContext,
+                                        theme: selectedPalette,
+                                        username: username,
+                                        state: state,
+                                        dataBloc: BlocProvider.of<DataBloc>(builderContext),
+                                        buttonNewSomething: addNewSomething('', null, state),
                                         isLoading: state is DataLoading,
                                       );
                                     } else if (state is DataLoading) {
@@ -433,7 +574,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   homeFunction: () {
                     BlocProvider.of<DataBloc>(context).add(LoadCategories());
                   },
-                  historyFunction: () {},
+                  historyFunction: () {
+                    BlocProvider.of<DataBloc>(context).add(LoadAllEntries());
+                  },
                   chartFunction: () {},
                   profileFunction: () {
                     showDialog(

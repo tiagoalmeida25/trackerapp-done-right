@@ -79,6 +79,22 @@ class FirestoreService {
     });
   }
 
+  Stream<List<Entry>> getAllEntries() {
+    return _entriesCollectionReference.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        return Entry(
+          id: doc.id,
+          category: data['category'],
+          subcategory: data['subcategory'],
+          value: data['value'],
+          date: data['date'].toDate(),
+        );
+      }).toList();
+    });
+  }
+
   Future<void> createEntry(String category, String subcategory, String value, DateTime date) async {
     String categoryId = '';
     String subcategoryId = '';
@@ -170,8 +186,9 @@ class FirestoreService {
   Future<void> deleteCategory(String id) async {
     await _categoriesCollectionReference.doc(id).delete();
 
-    final subcategoriesQuery = await _subcategoriesCollectionReference.where('category_id', isEqualTo: id).get();
-    
+    final subcategoriesQuery =
+        await _subcategoriesCollectionReference.where('category_id', isEqualTo: id).get();
+
     for (final subcategory in subcategoriesQuery.docs) {
       await _subcategoriesCollectionReference.doc(subcategory.id).delete();
     }
