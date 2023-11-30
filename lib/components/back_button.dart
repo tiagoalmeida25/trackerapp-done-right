@@ -12,9 +12,9 @@ class CustomBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(32),
           child: Container(
-            height: 30,
+            height: 35,
             width: 75,
             color: const Color.fromRGBO(37, 42, 48, 1),
             padding: const EdgeInsets.only(left: 4, right: 4),

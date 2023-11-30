@@ -3,6 +3,7 @@ import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart';
 
 class EntryContainer extends StatelessWidget {
   final Function() onTap;
+  final Function() onLongPress;
   final String word;
   final int index;
   final DateTime? date;
@@ -12,6 +13,7 @@ class EntryContainer extends StatelessWidget {
     Key? key,
     required this.theme,
     required this.onTap,
+    required this.onLongPress,
     required this.word,
     required this.index,
     this.date,
@@ -76,6 +78,7 @@ class EntryContainer extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Stack(
         children: [
           Padding(
@@ -83,7 +86,7 @@ class EntryContainer extends StatelessWidget {
             child: Container(
               height: wordHeight + 36,
               decoration: BoxDecoration(
-                color: theme[index + 1],
+                color: theme[index%10 + 1],
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
@@ -98,7 +101,7 @@ class EntryContainer extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(bottom: 8, left: 24, right: 8, top: 10),
+            padding: const EdgeInsets.only(bottom: 8, left: 16, right: 8, top: 10),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(32),
               child: Container(

@@ -35,6 +35,18 @@ class AddEntry extends DataEvent {
       required this.date});
 }
 
+class DeleteCategory extends DataEvent {
+  final Category category;
+
+  DeleteCategory({required this.category});
+}
+
+class DeleteSubcategory extends DataEvent {
+  final Subcategory subcategory;
+
+  DeleteSubcategory({required this.subcategory});
+}
+
 class DeleteEntry extends DataEvent {
   final Entry entry;
 

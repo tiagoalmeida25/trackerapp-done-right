@@ -56,7 +56,7 @@ class DataBloc extends Bloc<DataEvent, DataState> {
           event.value,
           event.date,
         );
-        emit(DataOperationSuccess(message: 'Entry added'));
+        emit(DataOperationSuccess(message: 'Entry added', previousState: state));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }
@@ -72,7 +72,27 @@ class DataBloc extends Bloc<DataEvent, DataState> {
           event.value,
           event.date,
         );
-        emit(DataOperationSuccess(message: 'Entry added'));
+        emit(DataOperationSuccess(message: 'Entry added', previousState: state));
+      } catch (e) {
+        emit(DataError(message: e.toString()));
+      }
+    });
+
+    on<DeleteCategory>((event, emit) async {
+      try {
+        emit(DataLoading());
+        await firestoreService.deleteCategory(event.category.categoryId);
+        emit(DataOperationSuccess(message: 'Category deleted', previousState: state));
+      } catch (e) {
+        emit(DataError(message: e.toString()));
+      }
+    });
+
+    on<DeleteSubcategory>((event, emit) async {
+      try {
+        emit(DataLoading());
+        await firestoreService.deleteSubcategory(event.subcategory.subcategoryId);
+        emit(DataOperationSuccess(message: 'Subcategory deleted', previousState: state));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }
@@ -81,8 +101,8 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     on<DeleteEntry>((event, emit) async {
       try {
         emit(DataLoading());
-        await firestoreService.deleteData(event.entry.id);
-        emit(DataOperationSuccess(message: 'Entry deleted'));
+        await firestoreService.deleteEntry(event.entry.id);
+        emit(DataOperationSuccess(message: 'Entry deleted', previousState: state));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }
@@ -91,14 +111,14 @@ class DataBloc extends Bloc<DataEvent, DataState> {
     on<UpdateEntry>((event, emit) async {
       try {
         emit(DataLoading());
-        await firestoreService.updateData(
+        await firestoreService.updateEntry(
           event.id,
           event.categoryId,
           event.subcategoryId,
           event.value,
           event.date,
         );
-        emit(DataOperationSuccess(message: 'Entry updated'));
+        emit(DataOperationSuccess(message: 'Entry updated', previousState: state));
       } catch (e) {
         emit(DataError(message: e.toString()));
       }

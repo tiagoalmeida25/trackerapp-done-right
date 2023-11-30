@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
       decoration: BoxDecoration(
           color: state is EntriesLoaded ? Colors.transparent : const Color.fromRGBO(37, 42, 48, 1),
-          borderRadius: BorderRadius.circular(16)),
+          borderRadius: BorderRadius.circular(32)),
       child: Row(
         children: [
           state is! EntriesLoaded
@@ -355,7 +355,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                     } else if (state is DataOperationSuccess) {
                                       ScaffoldMessenger.of(listennerContext)
                                           .showSnackBar(SnackBar(content: Text(state.message)));
-                                      BlocProvider.of<DataBloc>(listennerContext).add(LoadCategories());
+
+                                      if (state.previousState is EntriesLoaded) {
+                                        BlocProvider.of<DataBloc>(listennerContext).add(LoadEntries(
+                                          category: (state.previousState as LoadEntries).category,
+                                          categoryId: (state.previousState as LoadEntries).categoryId,
+                                          subcategory: (state.previousState as LoadEntries).subcategory,
+                                          subcategoryId: (state.previousState as LoadEntries).subcategoryId,
+                                        ));
+                                      } else if (state.previousState is SubcategoriesLoaded) {
+                                        BlocProvider.of<DataBloc>(listennerContext).add(LoadSubcategories(
+                                          category: (state.previousState as LoadSubcategories).category,
+                                          categoryId: (state.previousState as LoadSubcategories).categoryId,
+                                        ));
+                                      } else {
+                                        BlocProvider.of<DataBloc>(listennerContext).add(LoadCategories());
+                                      }
                                     }
                                   },
                                   builder: (builderContext, state) {
@@ -411,10 +426,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       addEntry(context, state.category, '');
                     } else if (state is EntriesLoaded) {
                       addEntry(context, state.category, state.subcategory);
+                    } else {
+                      addEntry(context, '', '');
                     }
-                    addEntry(context, '', '');
                   },
-                  homeFunction: () {},
+                  homeFunction: () {
+                    BlocProvider.of<DataBloc>(context).add(LoadCategories());
+                  },
                   historyFunction: () {},
                   chartFunction: () {},
                   profileFunction: () {
@@ -434,7 +452,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             setState(() {
                               selectedPalette = paletteMap[value!]!;
                               selectedPaletteName = value;
-                              
                             });
                           },
                         ),

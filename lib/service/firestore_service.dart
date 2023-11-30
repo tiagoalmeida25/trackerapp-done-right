@@ -167,11 +167,38 @@ class FirestoreService {
     });
   }
 
-  Future<void> deleteData(String id) async {
+  Future<void> deleteCategory(String id) async {
+    await _categoriesCollectionReference.doc(id).delete();
+
+    final subcategoriesQuery = await _subcategoriesCollectionReference.where('category_id', isEqualTo: id).get();
+    
+    for (final subcategory in subcategoriesQuery.docs) {
+      await _subcategoriesCollectionReference.doc(subcategory.id).delete();
+    }
+
+    final entriesQuery = await _entriesCollectionReference.where('category', isEqualTo: id).get();
+
+    for (final entry in entriesQuery.docs) {
+      await _entriesCollectionReference.doc(entry.id).delete();
+    }
+  }
+
+  Future<void> deleteSubcategory(String id) async {
+    await _subcategoriesCollectionReference.doc(id).delete();
+
+    final entriesQuery = await _entriesCollectionReference.where('subcategory', isEqualTo: id).get();
+
+    for (final entry in entriesQuery.docs) {
+      await _entriesCollectionReference.doc(entry.id).delete();
+    }
+  }
+
+  Future<void> deleteEntry(String id) async {
     await _entriesCollectionReference.doc(id).delete();
   }
 
-  Future<void> updateData(String id, String category, String subcategory, String value, DateTime date) async {
+  Future<void> updateEntry(
+      String id, String category, String subcategory, String value, DateTime date) async {
     await _entriesCollectionReference.doc(id).update({
       'category': category,
       'subcategory': subcategory,

@@ -43,7 +43,8 @@ class DataError extends DataState {
 }
 
 class DataOperationSuccess extends DataState {
+  final dynamic previousState;
   final String message;
 
-  DataOperationSuccess({required this.message});
+  DataOperationSuccess({required this.previousState, required this.message});
 }
