@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trackerapp/models/entry.dart';
-import 'package:trackerapp/models/category.dart';
-import 'package:trackerapp/models/subcategory.dart';
 
 class FirestoreService {
   final String id;
@@ -18,7 +16,7 @@ class FirestoreService {
       FirebaseFirestore.instance.collection('users').doc(id).collection('subcategories');
 
   Stream<List<Category>> getCategories() {
-    return _categoriesCollectionReference.snapshots().map((snapshot) {
+    return _categoriesCollectionReference.orderBy('updated_at', descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -33,7 +31,7 @@ class FirestoreService {
   }
 
   Stream<List<Subcategory>> getSubcategories(String categoryId) {
-    final data = _subcategoriesCollectionReference.snapshots().map((snapshot) {
+    final data = _subcategoriesCollectionReference.orderBy('updated_at', descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -56,7 +54,7 @@ class FirestoreService {
   }
 
   Stream<List<Entry>> getEntries(String categoryId, String subcategoryId) {
-    final data = _entriesCollectionReference.snapshots().map((snapshot) {
+    final data = _entriesCollectionReference.orderBy('date', descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
@@ -80,7 +78,7 @@ class FirestoreService {
   }
 
   Stream<List<Entry>> getAllEntries() {
-    return _entriesCollectionReference.snapshots().map((snapshot) {
+    return _entriesCollectionReference.orderBy('date', descending: true).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 

@@ -348,9 +348,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
                                             Text(state.category,
-                                                style: TextStyle(
-                                                  color: selectedPalette[10],
-                                                  fontSize: 26,
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
                                                   fontWeight: FontWeight.bold,
                                                 )),
                                             const SizedBox(width: 8),
@@ -362,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             Text(state.subcategory,
                                                 style: TextStyle(
                                                   color: selectedPalette[10],
-                                                  fontSize: 26,
+                                                  fontSize: 24,
                                                   fontWeight: FontWeight.bold,
                                                 )),
                                           ],

@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:trackerapp/models/entry.dart';
-import 'package:trackerapp/models/category.dart';
-import 'package:trackerapp/models/subcategory.dart';
 import 'package:trackerapp/service/firestore_service.dart';
 
 part 'data_event.dart';
